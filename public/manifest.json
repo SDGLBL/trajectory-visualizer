@@ -1,0 +1,15 @@
+{
+  "short_name": "Trajectory",
+  "name": "Trajectory Visualizer",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "542x362",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+} 
