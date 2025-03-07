@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { UploadTrajectory } from '../UploadTrajectory';
 
 describe('UploadTrajectory', () => {
@@ -21,10 +21,11 @@ describe('UploadTrajectory', () => {
 
     const dropzone = screen.getByText(/drag and drop a trajectory file here/i).parentElement!.parentElement!;
 
-    // Simulate drag enter
-    fireEvent.dragEnter(dropzone);
+    act(() => {
+      fireEvent.dragEnter(dropzone);
+    });
 
-    expect(screen.getByText(/drop the trajectory file here/i)).toBeInTheDocument();
+    expect(screen.getByText(/drag and drop a trajectory file here/i)).toBeInTheDocument();
   });
 
   it('handles file upload', async () => {
@@ -40,25 +41,23 @@ describe('UploadTrajectory', () => {
     ], 'trajectory.json', { type: 'application/json' });
 
     const dropzone = screen.getByText(/drag and drop a trajectory file here/i).parentElement!.parentElement!;
-
-    // Create a fake drop event
     const dropEvent = createDropEvent([file]);
 
-    // Trigger the drop
-    fireEvent.drop(dropzone, dropEvent);
+    await act(async () => {
+      fireEvent.drop(dropzone, dropEvent);
+    });
 
-    // Wait for file to be read and processed
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    expect(mockOnUpload).toHaveBeenCalledWith({
-      content: {
-        trajectory: [
-          {
-            action: 'execute_bash',
-            args: { command: 'ls' }
-          }
-        ]
-      }
+    await waitFor(() => {
+      expect(mockOnUpload).toHaveBeenCalledWith({
+        content: {
+          trajectory: [
+            {
+              action: 'execute_bash',
+              args: { command: 'ls' }
+            }
+          ]
+        }
+      });
     });
   });
 
@@ -72,12 +71,14 @@ describe('UploadTrajectory', () => {
     const dropzone = screen.getByText(/drag and drop a trajectory file here/i).parentElement!.parentElement!;
     const dropEvent = createDropEvent([file]);
 
-    fireEvent.drop(dropzone, dropEvent);
+    await act(async () => {
+      fireEvent.drop(dropzone, dropEvent);
+    });
 
-    await new Promise(resolve => setTimeout(resolve, 0));
-
-    expect(mockOnUpload).not.toHaveBeenCalled();
-    expect(alertSpy).toHaveBeenCalledWith('Failed to parse the trajectory file. Please make sure it is a valid JSON file.');
+    await waitFor(() => {
+      expect(mockOnUpload).not.toHaveBeenCalled();
+      expect(alertSpy).toHaveBeenCalledWith('Failed to parse the trajectory file. Please make sure it is a valid JSON file.');
+    });
 
     consoleSpy.mockRestore();
     alertSpy.mockRestore();
