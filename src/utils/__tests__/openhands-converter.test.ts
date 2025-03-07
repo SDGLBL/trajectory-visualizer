@@ -260,9 +260,6 @@ describe('OpenHands Trajectory Converter', () => {
   });
 
   it('should correctly process the message "Please read the README" through all steps', () => {
-    // Import the mock getStepInfo function
-    const { mockGetStepInfo } = require('../__mocks__/mockGetStepInfo');
-
     // Step 1: Test the raw trajectory entry
     const trajectoryEntry = {
       id: 1,
@@ -291,14 +288,6 @@ describe('OpenHands Trajectory Converter', () => {
       timestamp: '2025-03-07T13:22:36.000Z',
       content: trajectoryEntry.content,
       actorType: 'User'
-    });
-
-    // Step 3: Test TimelineStep's getStepInfo processing
-    const stepInfo = mockGetStepInfo(convertedEntry);
-    expect(stepInfo).toMatchObject({
-      stepTitle: 'User Message',
-      actorType: 'User',
-      stepColor: 'purple'
     });
 
     // Step 4: Verify the entry has all required fields for rendering

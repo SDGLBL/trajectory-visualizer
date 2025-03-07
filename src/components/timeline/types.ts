@@ -6,13 +6,21 @@ export interface TimelineEntry {
   thought?: string;
   command?: string;
   path?: string;
+  actorType?: 'User' | 'Assistant' | 'System';
   metadata?: {
     cost?: number;
     [key: string]: any;
   };
 }
 
-export type StepColor = 'blue' | 'green' | 'yellow' | 'red' | 'gray';
+export type StepColor = 'blue' | 'green' | 'yellow' | 'red' | 'gray' | 'purple' | 'indigo';
+
+export interface StepInfo {
+  stepTitle: string;
+  stepIcon: React.ReactNode;
+  actorType: 'User' | 'Assistant' | 'System';
+  stepColor: StepColor;
+}
 
 export interface TimelineStepProps {
   entry: TimelineEntry;

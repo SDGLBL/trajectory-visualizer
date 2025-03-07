@@ -111,7 +111,7 @@ function getActionType(action: string): TimelineEntry['type'] {
   }
 }
 
-function getObservationType(observation: string, success?: boolean): TimelineEntry['type'] {
+function getObservationType(_observation: string, success?: boolean): TimelineEntry['type'] {
   if (success === false) {
     return 'error';
   }

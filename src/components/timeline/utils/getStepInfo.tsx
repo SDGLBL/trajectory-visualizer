@@ -1,6 +1,5 @@
-import React from 'react';
+
 import { TimelineEntry, StepInfo } from '../types';
-import type { StepColor } from '../types';
 
 function getActorType(entry: TimelineEntry): 'User' | 'Assistant' | 'System' {
   return entry.actorType || 'System';

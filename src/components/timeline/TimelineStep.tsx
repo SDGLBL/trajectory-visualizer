@@ -2,16 +2,17 @@ import React, { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { getStepInfo } from './utils/getStepInfo';
-import { TimelineEntry, TimelineStepProps, StepColor } from './types';
+import { TimelineStepProps, StepColor } from './types';
 
 
-
-const colorClasses = {
+const colorClasses: Record<StepColor, string> = {
   blue: 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
   green: 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800',
   purple: 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800',
   yellow: 'bg-yellow-50 text-yellow-700 border-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800',
   indigo: 'bg-indigo-50 text-indigo-700 border-indigo-100 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800',
+  red: 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800',
+  gray: 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800',
 };
 
 const MarkdownContent: React.FC<{ content: string; className?: string }> = memo(({ content, className = '' }) => (
@@ -50,7 +51,7 @@ const TimelineStep: React.FC<TimelineStepProps> = memo(({
   formatTimelineDate,
   onSelect,
   onCommandClick,
-  onFileEditClick,
+
 }) => {
   const { stepTitle, stepIcon, actorType, stepColor } = getStepInfo(entry);
 
@@ -110,8 +111,8 @@ const TimelineStep: React.FC<TimelineStepProps> = memo(({
                   <MarkdownContent content={entry.content} />
                 </div>
               )}
-              {entry.command && (
-                <CommandBlock command={entry.command} onCopy={() => onCommandClick(new MouseEvent('click') as any)} />
+              {entry.command && onCommandClick && (
+                <CommandBlock command={entry.command} onCopy={() => onCommandClick(entry.command!)} />
               )}
             </div>
           </div>

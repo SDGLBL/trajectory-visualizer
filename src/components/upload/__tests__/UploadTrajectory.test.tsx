@@ -1,9 +1,10 @@
-import React from 'react';
+
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { UploadTrajectory } from '../UploadTrajectory';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 describe('UploadTrajectory', () => {
-  const mockOnUpload = jest.fn();
+  const mockOnUpload = vi.fn();
 
   beforeEach(() => {
     mockOnUpload.mockClear();
@@ -62,8 +63,8 @@ describe('UploadTrajectory', () => {
   });
 
   it('handles invalid JSON file', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
 
     render(<UploadTrajectory onUpload={mockOnUpload} />);
 
