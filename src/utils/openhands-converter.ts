@@ -1,5 +1,8 @@
 import { TimelineEntry } from '../components/timeline/types';
 
+// Re-export the TimelineEntry type to ensure we're using the same type
+interface OpenHandsTimelineEntry extends TimelineEntry {}
+
 interface OpenHandsEvent {
   id?: number;
   timestamp?: string;
@@ -18,9 +21,9 @@ interface OpenHandsEvent {
   success?: boolean;
 }
 
-export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): TimelineEntry[] {
+export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHandsTimelineEntry[] {
   // First entry is always a message showing the start
-  const entries: TimelineEntry[] = [{
+  const entries: OpenHandsTimelineEntry[] = [{
     type: 'message',
     timestamp: new Date().toISOString(),
     title: 'Starting trajectory visualization',
