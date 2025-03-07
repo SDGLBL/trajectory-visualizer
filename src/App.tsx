@@ -53,10 +53,10 @@ const TokenPrompt: React.FC<{ isDark?: boolean }> = ({ isDark = false }) => {
         </svg>
       </div>
       <h2 className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
-        GitHub Token Required
+        Configure GitHub Token
       </h2>
       <p className={`${isDark ? 'text-gray-300' : 'text-gray-500'} mb-6 text-sm max-w-sm mx-auto`}>
-        To access GitHub repositories and workflow details, please configure your GitHub token with 'repo' scope.
+        To access GitHub repositories and workflow details, configure your GitHub token with 'repo' scope. This is optional if you only want to visualize local trajectories.
       </p>
       
       <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg shadow-sm border p-4 mb-6 w-full max-w-sm mx-auto`}>
@@ -387,7 +387,34 @@ const App: React.FC = () => {
 
         {/* Main Content */}
         <main className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow overflow-hidden">
-          {!localStorage.getItem('github_token') ? (
+          {!owner && !repo && !uploadedContent ? (
+            <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+              <div className="max-w-3xl mx-auto space-y-8">
+                <div>
+                  <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    Upload OpenHands Trajectory
+                  </h2>
+                  <UploadTrajectory onUpload={handleTrajectoryUpload} />
+                </div>
+
+                {!localStorage.getItem('github_token') ? (
+                  <div>
+                    <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      Configure GitHub Token (Optional)
+                    </h2>
+                    <TokenPrompt isDark={isDark} />
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      Or Select GitHub Repository
+                    </h2>
+                    <RepositorySelector onSelectRepository={handleRepositorySelect} />
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : !localStorage.getItem('github_token') && owner && repo ? (
             <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
               <TokenPrompt isDark={isDark} />
             </div>
