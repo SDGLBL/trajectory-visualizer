@@ -258,4 +258,25 @@ describe('OpenHands Trajectory Converter', () => {
       content: 'file.txt'
     });
   });
+
+  it('should correctly label assistant messages', () => {
+    const trajectory = [
+      {
+        id: 1,
+        timestamp: '2025-03-07T13:22:21.123456',
+        source: 'assistant',
+        message: 'I will analyze the code',
+        observation: 'assistant_message',
+        content: 'I will analyze the code'
+      }
+    ];
+
+    const entries = convertOpenHandsTrajectory(trajectory);
+    expect(entries[1]).toMatchObject({
+      type: 'message',
+      title: 'Assistant Message',
+      content: 'I will analyze the code',
+      actorType: 'Assistant'
+    });
+  });
 });

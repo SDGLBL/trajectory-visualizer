@@ -80,9 +80,9 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
     } else if (event.observation) {
       // This is an observation event
       const entry = {
-        type: getObservationType(event.observation, event.success),
+        type: event.observation === 'user_message' || event.observation === 'assistant_message' ? 'message' : getObservationType(event.observation, event.success),
         timestamp: event.timestamp || new Date().toISOString(),
-        title: event.source === 'user' ? 'User Message' : event.message || event.observation,
+        title: event.message || event.observation,
         content: event.content || '',
         metadata: event.extras || {},
         actorType: getActorType(event.source),
