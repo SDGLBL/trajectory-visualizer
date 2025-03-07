@@ -1,6 +1,6 @@
 export interface TimelineEntry {
   type: string;
-  content: string;
+  content?: string;
   timestamp: string;
   is_input?: boolean;
   action?: string;

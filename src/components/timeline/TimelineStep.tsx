@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 
 export interface TimelineEntry {
   type: string;
-  content: string;
+  content?: string;
   timestamp: string;
   is_input?: boolean;
   action?: string;
@@ -43,7 +43,7 @@ const colorClasses: Record<StepColor, string> = {
 interface StepInfo {
   stepTitle: string;
   stepIcon: JSX.Element;
-  actorType: string;
+  actorType: 'User' | 'Assistant' | 'System';
   stepColor: StepColor;
 }
 
