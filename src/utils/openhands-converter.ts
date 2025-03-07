@@ -39,7 +39,9 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
         title: event.message || event.action,
         thought: event.cause,
         metadata: {},
-        actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System'
+        actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System',
+        command: '',
+        path: ''
       };
 
       // Add command for execute_bash action
@@ -69,7 +71,9 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
         title: event.source === 'user' ? 'User Message' : event.message || event.observation,
         content: event.content || '',
         metadata: event.extras || {},
-        actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System'
+        actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System',
+        command: '',
+        path: ''
       };
 
       entries.push(entry as TimelineEntry);
