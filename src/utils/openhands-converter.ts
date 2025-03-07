@@ -35,7 +35,8 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): Timeli
         timestamp: event.timestamp || new Date().toISOString(),
         title: event.message || event.action,
         thought: event.cause,
-        metadata: {}
+        metadata: {},
+        actorType: event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant'
       };
 
       // Add command for execute_bash action
@@ -62,9 +63,10 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): Timeli
       const entry: TimelineEntry = {
         type: getObservationType(event.observation, event.success),
         timestamp: event.timestamp || new Date().toISOString(),
-        title: event.message || event.observation,
+        title: event.source === 'user' ? 'User Message' : event.message || event.observation,
         content: event.content || '',
-        metadata: event.extras || {}
+        metadata: event.extras || {},
+        actorType: event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant'
       };
 
       entries.push(entry);

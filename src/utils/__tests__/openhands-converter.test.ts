@@ -172,6 +172,67 @@ describe('OpenHands Trajectory Converter', () => {
     });
   });
 
+  it('should correctly identify user and assistant messages', () => {
+    const trajectory = [
+      {
+        id: 1,
+        timestamp: '2025-03-07T13:22:20.840987',
+        source: 'user',
+        message: 'Please read the README',
+        observation: 'user_message',
+        content: 'Please read the README'
+      },
+      {
+        id: 2,
+        timestamp: '2025-03-07T13:22:21.123456',
+        source: 'assistant',
+        message: 'I will help you with that',
+        action: 'execute_bash',
+        args: {
+          command: 'cat README.md'
+        }
+      },
+      {
+        id: 3,
+        timestamp: '2025-03-07T13:22:21.234567',
+        source: 'system',
+        message: 'Command output',
+        observation: 'command_output',
+        content: '# Example\nThis is a readme'
+      }
+    ];
+
+    const entries = convertOpenHandsTrajectory(trajectory);
+
+    // First entry is always the start message
+    expect(entries[0].type).toBe('message');
+    expect(entries[0].title).toBe('Starting trajectory visualization');
+
+    // User message
+    expect(entries[1]).toMatchObject({
+      type: 'message',
+      title: 'User Message',
+      content: 'Please read the README',
+      actorType: 'User'
+    });
+
+    // Assistant action
+    expect(entries[2]).toMatchObject({
+      type: 'command',
+      title: 'I will help you with that',
+      command: 'cat README.md',
+      actorType: 'Assistant'
+    });
+
+    // System output
+    expect(entries[3]).toMatchObject({
+      type: 'message',
+      title: 'Command output',
+      content: '# Example\nThis is a readme',
+      actorType: 'System'
+    });
+  });
+
   it('should handle missing optional fields', () => {
     const minimalTrajectory = [
       {

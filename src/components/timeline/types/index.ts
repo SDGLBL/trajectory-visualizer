@@ -12,6 +12,7 @@ export interface TimelineEntry {
     tokens?: number;
     [key: string]: any;
   };
+  actorType?: 'User' | 'Assistant' | 'System';
 }
 
 export type StepColor = 'blue' | 'green' | 'purple' | 'yellow' | 'indigo';
