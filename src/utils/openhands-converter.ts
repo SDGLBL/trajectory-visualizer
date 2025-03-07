@@ -21,16 +21,28 @@ interface OpenHandsEvent {
   success?: boolean;
 }
 
+function getActorType(source: string | undefined): 'User' | 'Assistant' | 'System' {
+  if (source === 'user') return 'User';
+  if (source === 'system' || source === 'environment') return 'System';
+  return 'Assistant';
+}
+
 export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHandsTimelineEntry[] {
   // First entry is always a message showing the start
   const entries: OpenHandsTimelineEntry[] = [{
     type: 'message',
     timestamp: new Date().toISOString(),
     title: 'Starting trajectory visualization',
-    content: 'Trajectory loaded from OpenHands format'
+    content: 'Trajectory loaded from OpenHands format',
+    actorType: 'System'
   }];
 
   for (const event of trajectory) {
+    // Skip environment state changes
+    if (event.source === 'environment' && event.observation === 'agent_state_changed') {
+      continue;
+    }
+
     if (event.action) {
       // This is an action event
       const entry = {
@@ -39,7 +51,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
         title: event.message || event.action,
         thought: event.cause,
         metadata: {},
-        actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System',
+        actorType: getActorType(event.source),
         command: '',
         path: ''
       };
@@ -71,7 +83,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
         title: event.source === 'user' ? 'User Message' : event.message || event.observation,
         content: event.content || '',
         metadata: event.extras || {},
-        actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System',
+        actorType: getActorType(event.source),
         command: '',
         path: ''
       };
