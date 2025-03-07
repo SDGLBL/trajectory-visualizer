@@ -5,6 +5,7 @@ import { WorkflowRunsList } from './components/workflow-runs';
 import RunDetails from './components/RunDetails';
 import RunDetailsSkeleton from './components/loading/RunDetailsSkeleton';
 import { WorkflowRun } from './types';
+import { UploadTrajectory } from './components/upload/UploadTrajectory';
 
 const TokenPrompt: React.FC<{ isDark?: boolean }> = ({ isDark = false }) => {
   const [token, setToken] = useState('');
@@ -52,10 +53,10 @@ const TokenPrompt: React.FC<{ isDark?: boolean }> = ({ isDark = false }) => {
         </svg>
       </div>
       <h2 className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'} mb-2`}>
-        GitHub Token Required
+        Configure GitHub Token
       </h2>
       <p className={`${isDark ? 'text-gray-300' : 'text-gray-500'} mb-6 text-sm max-w-sm mx-auto`}>
-        To access GitHub repositories and workflow details, please configure your GitHub token with 'repo' scope.
+        To access GitHub repositories and workflow details, configure your GitHub token with 'repo' scope. This is optional if you only want to visualize local trajectories.
       </p>
       
       <div className={`${isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'} rounded-lg shadow-sm border p-4 mb-6 w-full max-w-sm mx-auto`}>
@@ -279,6 +280,7 @@ const App: React.FC = () => {
     const { owner, repo } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const [uploadedContent, setUploadedContent] = useState<any | null>(null);
     
     // Check if we should restore from localStorage on initial load
     useEffect(() => {
@@ -325,6 +327,11 @@ const App: React.FC = () => {
       // This prevents trying to find runs from previous repositories
       navigate(`/${newOwner}/${newRepo}`);
     };
+
+    // Handle trajectory upload
+    const handleTrajectoryUpload = (content: any) => {
+      setUploadedContent(content);
+    };
     
     return (
       <div className="h-screen max-h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-gray-900">
@@ -360,7 +367,19 @@ const App: React.FC = () => {
                     </svg>
                   )}
                 </button>
-                {localStorage.getItem('github_token') && <RepositorySelector onSelectRepository={handleRepositorySelect} />}
+                {localStorage.getItem('github_token') && (
+                  <div className="flex items-center gap-4">
+                    <RepositorySelector onSelectRepository={handleRepositorySelect} />
+                    {uploadedContent && (
+                      <button
+                        onClick={() => setUploadedContent(null)}
+                        className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                      >
+                        Back to Repository
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -368,9 +387,81 @@ const App: React.FC = () => {
 
         {/* Main Content */}
         <main className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex-grow overflow-hidden">
-          {!localStorage.getItem('github_token') ? (
+          {!owner && !repo && !uploadedContent ? (
             <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
-              <TokenPrompt />
+              <div className="max-w-3xl mx-auto space-y-8">
+                <div>
+                  <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    Upload OpenHands Trajectory
+                  </h2>
+                  <UploadTrajectory onUpload={handleTrajectoryUpload} />
+                </div>
+
+                {!localStorage.getItem('github_token') ? (
+                  <div>
+                    <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      Configure GitHub Token (Optional)
+                    </h2>
+                    <TokenPrompt isDark={isDark} />
+                  </div>
+                ) : (
+                  <div>
+                    <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                      Or Select GitHub Repository
+                    </h2>
+                    <RepositorySelector onSelectRepository={handleRepositorySelect} />
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : !localStorage.getItem('github_token') && owner && repo ? (
+            <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+              <TokenPrompt isDark={isDark} />
+            </div>
+          ) : !owner && !repo && !uploadedContent ? (
+            <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">
+              <div className="max-w-3xl mx-auto space-y-8">
+                <div>
+                  <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    Select GitHub Repository
+                  </h2>
+                  <RepositorySelector onSelectRepository={handleRepositorySelect} />
+                </div>
+                
+                <div>
+                  <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                    Or Upload OpenHands Trajectory
+                  </h2>
+                  <UploadTrajectory onUpload={handleTrajectoryUpload} />
+                </div>
+              </div>
+            </div>
+          ) : uploadedContent ? (
+            <div className="h-[calc(100vh-8rem)] overflow-hidden">
+              <RunDetails 
+                owner="local" 
+                repo="trajectory" 
+                run={{
+                  id: 0,
+                  name: 'Local Trajectory',
+                  head_branch: '',
+                  head_sha: '',
+                  run_number: 0,
+                  event: 'local',
+                  status: 'completed',
+                  conclusion: 'success',
+                  workflow_id: 0,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                  html_url: '',
+                  run_attempt: 1,
+                  run_started_at: new Date().toISOString(),
+                  jobs_url: '',
+                  logs_url: '',
+                  workflow_name: 'Local Trajectory'
+                }}
+                initialContent={uploadedContent}
+              />
             </div>
           ) : owner && repo ? (
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 h-full">

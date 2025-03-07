@@ -6,14 +6,16 @@ import { Timeline } from './timeline/Timeline';
 import { TimelineEntry } from './timeline/types';
 import ArtifactDetails from './artifacts/ArtifactDetails';
 import RunHeader from './header/RunHeader';
+import { convertOpenHandsTrajectory } from '../utils/openhands-converter';
 
 interface RunDetailsProps {
   owner: string;
   repo: string;
   run: WorkflowRun;
+  initialContent?: any;
 }
 
-const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
+const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialContent }) => {
   const [runDetails, setRunDetails] = useState<RunDetailsResponse | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
@@ -45,6 +47,10 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
 
   // Create a reference for timelineEntries for use in multiple places
   const getTimelineEntries = useCallback(() => {
+    // Check if this is an OpenHands trajectory
+    if (artifactContent?.content?.trajectory) {
+      return convertOpenHandsTrajectory(artifactContent.content.trajectory);
+    }
     return artifactContent?.content?.history || artifactContent?.content?.jsonlHistory || [];
   }, [artifactContent]);
 
@@ -152,17 +158,28 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
         setLoading(true);
         setProcessingArtifact(false); // Reset processing state
         
-        const details = await api.getRunDetails(owner, repo, run.id);
-        setRunDetails(details);
+        if (initialContent) {
+          // Use initial content if provided (for local trajectories)
+          setRunDetails({
+            run: run,
+            jobs: { total_count: 0, jobs: [] },
+            artifacts: { total_count: 0, artifacts: [] }
+          });
+          setArtifactContent(initialContent);
+        } else {
+          // Fetch from GitHub API
+          const details = await api.getRunDetails(owner, repo, run.id);
+          setRunDetails(details);
 
-        // Reset artifact state when run changes
-        setSelectedArtifact(null);
-        setArtifactContent(null);
+          // Reset artifact state when run changes
+          setSelectedArtifact(null);
+          setArtifactContent(null);
 
-        // If there's exactly one artifact and run was successful, auto-select it
-        if (details.artifacts?.artifacts?.length === 1 && run.conclusion === 'success') {
-          // Keep the loading state active during auto-selection
-          await handleArtifactSelect(details.artifacts.artifacts[0]);
+          // If there's exactly one artifact and run was successful, auto-select it
+          if (details.artifacts?.artifacts?.length === 1 && run.conclusion === 'success') {
+            // Keep the loading state active during auto-selection
+            await handleArtifactSelect(details.artifacts.artifacts[0]);
+          }
         }
 
         setError(null);
@@ -178,7 +195,7 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
     };
 
     fetchRunDetails();
-  }, [owner, repo, run, handleArtifactSelect, processingArtifact]);
+  }, [owner, repo, run, handleArtifactSelect, processingArtifact, initialContent]);
 
   const formatTimelineDate = useCallback((entry: TimelineEntry): string => {
     if (!entry.timestamp) {
