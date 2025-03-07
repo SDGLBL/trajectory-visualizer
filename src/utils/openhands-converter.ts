@@ -33,7 +33,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
   for (const event of trajectory) {
     if (event.action) {
       // This is an action event
-      const entry: TimelineEntry = {
+      const entry = {
         type: getActionType(event.action),
         timestamp: event.timestamp || new Date().toISOString(),
         title: event.message || event.action,
@@ -60,10 +60,10 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
         };
       }
 
-      entries.push(entry);
+      entries.push(entry as TimelineEntry);
     } else if (event.observation) {
       // This is an observation event
-      const entry: TimelineEntry = {
+      const entry = {
         type: getObservationType(event.observation, event.success),
         timestamp: event.timestamp || new Date().toISOString(),
         title: event.source === 'user' ? 'User Message' : event.message || event.observation,
@@ -72,7 +72,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
         actorType: (event.source === 'user' ? 'User' : event.source === 'system' ? 'System' : 'Assistant') as 'User' | 'Assistant' | 'System'
       };
 
-      entries.push(entry);
+      entries.push(entry as TimelineEntry);
     }
   }
 
