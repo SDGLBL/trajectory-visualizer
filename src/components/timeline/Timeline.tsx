@@ -37,13 +37,6 @@ export const Timeline: React.FC<TimelineProps> = ({
   return (
     <div className="h-full py-1 px-2">
       <div ref={timelineContainerRef}>
-        {/* Debug info for the timeline */}
-        {entries.length === 0 && (
-          <div className="p-4 text-center text-gray-500">
-            No timeline entries available
-          </div>
-        )}
-
         {/* Empty state */}
         {entries.length <= 1 && (
           <div className="p-4 text-center text-gray-500">
