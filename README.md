@@ -9,6 +9,7 @@ A modern web application for visualizing OpenHands Resolver and their execution 
 - **GitHub Authentication**: Secure GitHub token authentication with appropriate scopes
 - **Repository Selection**: Easy navigation between repositories
 - **Workflow Run Timeline**: Interactive timeline visualization of workflow execution steps
+- **OpenHands Support**: Upload and visualize trajectories exported from OpenHands
 - **Dark/Light Mode**: Full support for system and user preferences
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 - **Keyboard Navigation**: Efficient keyboard shortcuts for timeline traversal
@@ -41,9 +42,10 @@ A modern web application for visualizing OpenHands Resolver and their execution 
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-### GitHub Token Setup
+### Usage
 
-To use Trajectory Visualizer, you'll need a GitHub personal access token with the following scopes:
+#### GitHub Workflow Visualization
+To use Trajectory Visualizer with GitHub workflows, you'll need a GitHub personal access token with the following scopes:
 - `repo` - Full control of private repositories
 - `workflow` - Update GitHub Action workflows
 
@@ -51,6 +53,20 @@ Follow these steps to create a token:
 1. Go to GitHub Settings → Developer Settings → Personal Access Tokens → Tokens (classic)
 2. Generate a new token with the required scopes
 3. Copy the token and paste it into the application when prompted
+
+#### OpenHands Trajectory Visualization
+You can also visualize trajectories exported from OpenHands:
+
+1. In OpenHands, use the download button next to the thumbs up/down buttons to export a trajectory
+2. In Trajectory Visualizer, click "Upload OpenHands Trajectory"
+3. Drag and drop the downloaded JSON file or click to select it
+4. The trajectory will be displayed in the timeline view
+
+The timeline shows:
+- Actions (commands, edits, searches) in blue
+- Observations (messages, errors) in gray/red
+- Each step shows the timestamp, title, content, and any metadata
+- You can navigate through steps using arrow keys or clicking
 
 ## Technology Stack
 
@@ -68,8 +84,13 @@ trajectory-visualizer/
 │   ├── public/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── upload/           # OpenHands trajectory upload
+│   │   │   ├── timeline/         # Timeline visualization
+│   │   │   └── ...
 │   │   ├── services/
 │   │   ├── types/
+│   │   ├── utils/
+│   │   │   └── openhands-converter.ts  # OpenHands format converter
 │   │   └── App.tsx
 │   ├── package.json
 │   └── tsconfig.json
