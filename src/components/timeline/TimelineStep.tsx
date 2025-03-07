@@ -1,35 +1,9 @@
 import React, { memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { getStepInfo } from './utils/getStepInfo';
+import { TimelineStepProps, StepColor } from './types';
 
-export interface TimelineEntry {
-  type: string;
-  content: string;
-  timestamp: string;
-  is_input?: boolean;
-  action?: string;
-  command?: string;
-  thought?: string;
-  path?: string;
-  metadata?: {
-    cost?: number;
-    tokens?: number;
-    [key: string]: any;
-  };
-}
-
-type StepColor = 'blue' | 'green' | 'purple' | 'yellow' | 'indigo';
-
-interface TimelineStepProps {
-  entry: TimelineEntry;
-  index: number;
-  isSelected: boolean;
-  isLast: boolean;
-  formatTimelineDate: (entry: TimelineEntry) => string;
-  onSelect: (index: number) => void;
-  onCommandClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-
-}
 
 const colorClasses: Record<StepColor, string> = {
   blue: 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
@@ -37,94 +11,8 @@ const colorClasses: Record<StepColor, string> = {
   purple: 'bg-purple-50 text-purple-700 border-purple-100 dark:bg-purple-900/20 dark:text-purple-400 dark:border-purple-800',
   yellow: 'bg-yellow-50 text-yellow-700 border-yellow-100 dark:bg-yellow-900/20 dark:text-yellow-400 dark:border-yellow-800',
   indigo: 'bg-indigo-50 text-indigo-700 border-indigo-100 dark:bg-indigo-900/20 dark:text-indigo-400 dark:border-indigo-800',
-};
-
-interface StepInfo {
-  stepTitle: string;
-  stepIcon: JSX.Element;
-  actorType: string;
-  stepColor: StepColor;
-}
-
-const getStepInfo = (entry: TimelineEntry): StepInfo => {
-  if (entry.is_input) {
-    return {
-      stepTitle: 'User Input',
-      stepIcon: (
-        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-      ),
-      actorType: 'Observer',
-      stepColor: 'purple',
-    };
-  }
-
-  if (entry.action) {
-    if (entry.action === 'run') {
-      return {
-        stepTitle: entry.action,
-        stepIcon: (
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        ),
-        actorType: 'Agent',
-        stepColor: 'green',
-      };
-    }
-
-    if (entry.action === 'edit') {
-      return {
-        stepTitle: entry.action,
-        stepIcon: (
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-        ),
-        actorType: 'Agent',
-        stepColor: 'yellow',
-      };
-    }
-  }
-
-  if (entry.command) {
-    return {
-      stepTitle: 'Command',
-      stepIcon: (
-        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      ),
-      actorType: 'Agent',
-      stepColor: 'green',
-    };
-  }
-
-  if (entry.thought) {
-    return {
-      stepTitle: 'Thought',
-      stepIcon: (
-        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-        </svg>
-      ),
-      actorType: 'Agent',
-      stepColor: 'indigo',
-    };
-  }
-
-  return {
-    stepTitle: 'Action',
-    stepIcon: (
-      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
-    actorType: 'Agent',
-    stepColor: 'blue',
-  };
+  red: 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800',
+  gray: 'bg-gray-50 text-gray-700 border-gray-100 dark:bg-gray-900/20 dark:text-gray-400 dark:border-gray-800',
 };
 
 const MarkdownContent: React.FC<{ content: string; className?: string }> = memo(({ content, className = '' }) => (
@@ -198,7 +86,7 @@ const TimelineStep: React.FC<TimelineStepProps> = memo(({
                   {actorType}
                 </span>
                 <h4 className="text-xs font-medium text-gray-900 dark:text-white truncate">
-                  {stepTitle}
+                  {entry.type === 'message' ? <MarkdownContent content={stepTitle} /> : stepTitle}
                 </h4>
                 <time className="text-[10px] tabular-nums text-gray-400 dark:text-gray-500 font-medium">
                   {formatTimelineDate(entry)}
@@ -223,8 +111,8 @@ const TimelineStep: React.FC<TimelineStepProps> = memo(({
                   <MarkdownContent content={entry.content} />
                 </div>
               )}
-              {entry.command && (
-                <CommandBlock command={entry.command} onCopy={onCommandClick} />
+              {entry.command && onCommandClick && (
+                <CommandBlock command={entry.command} onCopy={() => onCommandClick(entry.command!)} />
               )}
             </div>
           </div>

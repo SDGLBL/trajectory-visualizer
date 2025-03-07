@@ -1,9 +1,7 @@
 export interface TimelineEntry {
-  type: string;
-  content: string;
+  type: 'edit' | 'message' | 'search' | 'command' | 'error';
+  content?: string;
   timestamp: string;
-  is_input?: boolean;
-  action?: string;
   command?: string;
   thought?: string;
   path?: string;
@@ -12,6 +10,8 @@ export interface TimelineEntry {
     tokens?: number;
     [key: string]: any;
   };
+  actorType?: 'User' | 'Assistant' | 'System';
+  title?: string;
 }
 
 export type StepColor = 'blue' | 'green' | 'purple' | 'yellow' | 'indigo';
@@ -19,7 +19,7 @@ export type StepColor = 'blue' | 'green' | 'purple' | 'yellow' | 'indigo';
 export interface StepInfo {
   stepTitle: string;
   stepIcon: JSX.Element;
-  actorType: string;
+  actorType: 'User' | 'Assistant' | 'System';
   stepColor: StepColor;
 }
 
