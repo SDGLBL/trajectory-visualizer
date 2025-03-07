@@ -15,7 +15,7 @@ interface RunDetailsProps {
 
 const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
   const [runDetails, setRunDetails] = useState<RunDetailsResponse | null>(null);
-  const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
+
   const [artifactContent, setArtifactContent] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [contentLoading, setContentLoading] = useState<boolean>(false);
@@ -109,11 +109,8 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
 
   const handleArtifactSelect = useCallback(async (artifact: Artifact) => {
     if (!artifact) return;
-    setSelectedArtifact(artifact);
-    
     // Set loading state at the beginning of the process
     setContentLoading(true);
-    setSelectedArtifact(artifact);
 
     try {
       console.log('Loading artifact content for:', artifact.name);
@@ -155,7 +152,7 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
         setRunDetails(details);
 
         // Reset artifact state when run changes
-        setSelectedArtifact(null);
+
         setArtifactContent(null);
 
         // If there's exactly one artifact and run was successful, auto-select it
