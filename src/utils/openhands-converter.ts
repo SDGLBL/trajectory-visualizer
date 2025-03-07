@@ -34,8 +34,10 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
     timestamp: new Date().toISOString(),
     title: 'Starting trajectory visualization',
     content: 'Trajectory loaded from OpenHands format',
-    actorType: 'System'
-  }];
+    actorType: 'System',
+    command: '',
+    path: ''
+  } as TimelineEntry];
 
   for (const event of trajectory) {
     // Skip environment state changes
