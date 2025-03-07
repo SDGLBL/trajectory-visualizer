@@ -211,7 +211,7 @@ describe('OpenHands Trajectory Converter', () => {
     // User message
     expect(entries[1]).toMatchObject({
       type: 'message',
-      title: 'User Message',
+      title: 'Please read the README',
       content: 'Please read the README',
       actorType: 'User'
     });
@@ -261,7 +261,7 @@ describe('OpenHands Trajectory Converter', () => {
 
   it('should correctly process the message "Please read the README" through all steps', () => {
     // Import the mock getStepInfo function
-    const { mockGetStepInfo } = require('./mockGetStepInfo');
+    const { mockGetStepInfo } = require('../__mocks__/mockGetStepInfo');
 
     // Step 1: Test the raw trajectory entry
     const trajectoryEntry = {
