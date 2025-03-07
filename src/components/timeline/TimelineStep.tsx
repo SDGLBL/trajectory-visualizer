@@ -28,7 +28,7 @@ interface TimelineStepProps {
   formatTimelineDate: (entry: TimelineEntry) => string;
   onSelect: (index: number) => void;
   onCommandClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  onFileEditClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+
 }
 
 const colorClasses: Record<StepColor, string> = {
@@ -163,7 +163,7 @@ const TimelineStep: React.FC<TimelineStepProps> = memo(({
   formatTimelineDate,
   onSelect,
   onCommandClick,
-  onFileEditClick,
+
 }) => {
   const { stepTitle, stepIcon, actorType, stepColor } = getStepInfo(entry);
 

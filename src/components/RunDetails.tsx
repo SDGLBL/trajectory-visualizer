@@ -15,7 +15,6 @@ interface RunDetailsProps {
 
 const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run }) => {
   const [runDetails, setRunDetails] = useState<RunDetailsResponse | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
   const [artifactContent, setArtifactContent] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

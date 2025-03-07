@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { TimelineEntry, StepColor } from '../types';
 import { FiMessageSquare, FiTerminal, FiEdit3, FiSearch, FiAlertCircle } from 'react-icons/fi';
 import { IconType } from 'react-icons';
