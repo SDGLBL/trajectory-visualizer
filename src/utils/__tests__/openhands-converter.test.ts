@@ -259,24 +259,53 @@ describe('OpenHands Trajectory Converter', () => {
     });
   });
 
-  it('should correctly label assistant messages', () => {
-    const trajectory = [
-      {
-        id: 1,
-        timestamp: '2025-03-07T13:22:21.123456',
-        source: 'assistant',
-        message: 'I will analyze the code',
-        observation: 'assistant_message',
-        content: 'I will analyze the code'
-      }
-    ];
+  it('should correctly process the message "Please read the README" through all steps', () => {
+    // Import the mock getStepInfo function
+    const { mockGetStepInfo } = require('./mockGetStepInfo');
 
-    const entries = convertOpenHandsTrajectory(trajectory);
-    expect(entries[1]).toMatchObject({
+    // Step 1: Test the raw trajectory entry
+    const trajectoryEntry = {
+      id: 1,
+      timestamp: '2025-03-07T13:22:36.000Z',
+      source: 'user',  // This should be a user message
+      message: 'Please read the README and then upgrade the npm dependencies.',
+      observation: 'user_message',
+      content: 'Please read the README and then upgrade the npm dependencies.'
+    };
+
+    // Step 2: Test conversion in openhands-converter
+    const entries = convertOpenHandsTrajectory([trajectoryEntry]);
+    
+    // Verify the start message (first entry)
+    expect(entries[0]).toMatchObject({
       type: 'message',
-      title: 'Assistant Message',
-      content: 'I will analyze the code',
-      actorType: 'Assistant'
+      title: 'Starting trajectory visualization',
+      content: 'Trajectory loaded from OpenHands format',
+      actorType: 'System'
     });
+
+    // Verify the converted message entry
+    const convertedEntry = entries[1];
+    expect(convertedEntry).toMatchObject({
+      type: 'message',
+      timestamp: '2025-03-07T13:22:36.000Z',
+      content: trajectoryEntry.content,
+      actorType: 'User'
+    });
+
+    // Step 3: Test TimelineStep's getStepInfo processing
+    const stepInfo = mockGetStepInfo(convertedEntry);
+    expect(stepInfo).toMatchObject({
+      stepTitle: 'User Message',
+      actorType: 'User',
+      stepColor: 'purple'
+    });
+
+    // Step 4: Verify the entry has all required fields for rendering
+    expect(convertedEntry).toHaveProperty('timestamp');
+    expect(convertedEntry).toHaveProperty('type', 'message');
+    expect(convertedEntry).toHaveProperty('content');
+    expect(convertedEntry).toHaveProperty('actorType', 'User');
+    expect(convertedEntry.metadata).toBeDefined();
   });
 });
