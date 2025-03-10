@@ -35,6 +35,8 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
     events = trajectory;
   } else if ('entries' in trajectory) {
     events = trajectory.entries;
+  } else if ('history' in trajectory) {
+    return trajectory.history;
   } else if ('test_result' in trajectory && 'git_patch' in trajectory.test_result) {
     // Convert git patch to timeline entries
     const entries: TimelineEntry[] = [];
@@ -68,7 +70,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
 
     return entries;
   } else {
-    throw new Error('Invalid trajectory format. Expected an array of events, an object with "entries" array, or an object with "test_result.git_patch".');
+    throw new Error('Invalid trajectory format. Expected one of:\n1. Array of events with action, args, timestamp, etc.\n2. Object with "entries" array containing events\n3. Object with "history" array containing events\n4. Object with "test_result.git_patch" containing a git patch');
   }
 
   if (!Array.isArray(events)) {

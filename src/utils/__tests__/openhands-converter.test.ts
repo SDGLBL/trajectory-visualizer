@@ -307,6 +307,30 @@ describe('OpenHands Trajectory Converter', () => {
     });
   });
 
+  it('should handle history format', () => {
+    const historyData = {
+      history: [
+        {
+          id: 1,
+          timestamp: '2025-03-07T17:45:00.000Z',
+          type: 'message',
+          content: 'Hello, I need help with my code.',
+          actorType: 'User'
+        },
+        {
+          id: 2,
+          timestamp: '2025-03-07T17:45:10.000Z',
+          type: 'thought',
+          content: 'Let me analyze the code and identify potential issues.',
+          actorType: 'Assistant'
+        }
+      ]
+    };
+
+    const entries = convertOpenHandsTrajectory(historyData);
+    expect(entries).toEqual(historyData.history);
+  });
+
   it('should handle git patch format', () => {
     const gitPatchData = {
       test_result: {
