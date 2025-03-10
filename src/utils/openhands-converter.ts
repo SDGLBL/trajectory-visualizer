@@ -27,7 +27,24 @@ function getActorType(source: string | undefined): 'User' | 'Assistant' | 'Syste
   return 'Assistant';
 }
 
-export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] } | { test_result: { git_patch: string } }): OpenHandsTimelineEntry[] {
+interface HistoryEntry {
+  id: number;
+  timestamp: string;
+  source: string;
+  message: string;
+  action: string;
+  args: {
+    content?: string;
+    path?: string;
+    command?: string;
+  };
+}
+
+interface HistoryFormat {
+  history: HistoryEntry[];
+}
+
+export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] } | { test_result: { git_patch: string } } | HistoryFormat): OpenHandsTimelineEntry[] {
   // Handle different formats
   let events: OpenHandsEvent[];
   
@@ -35,9 +52,9 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
     events = trajectory;
   } else if ('entries' in trajectory) {
     events = trajectory.entries;
-  } else if ('history' in trajectory) {
+  } else if ('history' in trajectory && Array.isArray(trajectory.history)) {
     // Convert history entries to timeline format
-    return trajectory.history.map(entry => {
+    return (trajectory as HistoryFormat).history.map(entry => {
       const timelineEntry: TimelineEntry = {
         type: entry.action === 'read' ? 'search' : entry.action === 'message' ? 'message' : 'command',
         timestamp: entry.timestamp,
