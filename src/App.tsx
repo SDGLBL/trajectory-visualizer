@@ -246,23 +246,34 @@ const RunDetailsWithRouter: React.FC = () => {
 };
 
 // Main App Component
-const App: React.FC = () => {
-  const [isDark, setIsDark] = useState<boolean>(false);
+const App: React.FC<{ router?: boolean }> = ({ router = true }) => {
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    // First check localStorage
+    const storedPreference = localStorage.getItem('dark_mode');
+    if (storedPreference !== null) {
+      return storedPreference === 'true';
+    }
+    // Then check system preference
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
 
   useEffect(() => {
     // Check system dark mode preference
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDark(darkModeMediaQuery.matches);
-
-    // Listen for changes in system dark mode preference
-    const handleChange = (e: MediaQueryListEvent) => setIsDark(e.matches);
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only update if there's no stored preference
+      if (localStorage.getItem('dark_mode') === null) {
+        setIsDark(e.matches);
+      }
+    };
     darkModeMediaQuery.addEventListener('change', handleChange);
 
     return () => darkModeMediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   useEffect(() => {
-    // Apply dark mode class to root HTML element
+    // Store preference in localStorage and apply dark mode class
+    localStorage.setItem('dark_mode', isDark.toString());
     document.documentElement.classList.toggle('dark', isDark);
   }, [isDark]);
 
@@ -540,15 +551,15 @@ const App: React.FC = () => {
     );
   };
   
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/:owner/:repo/*" element={<MainContent />} />
-        {/* Specify index route to avoid double rendering */}
-        <Route index element={<MainContent />} />
-      </Routes>
-    </BrowserRouter>
+  const content = (
+    <Routes>
+      <Route path="/:owner/:repo/*" element={<MainContent />} />
+      {/* Specify index route to avoid double rendering */}
+      <Route index element={<MainContent />} />
+    </Routes>
   );
+
+  return router ? <BrowserRouter>{content}</BrowserRouter> : content;
 };
 
 export default App; 
