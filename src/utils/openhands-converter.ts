@@ -27,9 +27,32 @@ function getActorType(source: string | undefined): 'User' | 'Assistant' | 'Syste
   return 'Assistant';
 }
 
-export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] }): OpenHandsTimelineEntry[] {
-  // Handle new format with entries array
-  const events = Array.isArray(trajectory) ? trajectory : trajectory.entries;
+export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] } | { test_result: { git_patch: string } }): OpenHandsTimelineEntry[] {
+  // Handle different formats
+  let events: OpenHandsEvent[];
+  
+  if (Array.isArray(trajectory)) {
+    events = trajectory;
+  } else if ('entries' in trajectory) {
+    events = trajectory.entries;
+  } else if ('test_result' in trajectory && 'git_patch' in trajectory.test_result) {
+    // Convert git patch to timeline entries
+    return [{
+      type: 'message',
+      timestamp: new Date().toISOString(),
+      title: 'Git Patch',
+      content: trajectory.test_result.git_patch,
+      actorType: 'System',
+      command: '',
+      path: ''
+    } as TimelineEntry];
+  } else {
+    throw new Error('Invalid trajectory format. Expected an array of events, an object with "entries" array, or an object with "test_result.git_patch".');
+  }
+
+  if (!Array.isArray(events)) {
+    throw new Error('Invalid trajectory format. Events must be an array.');
+  }
   // First entry is always a message showing the start
   const entries: OpenHandsTimelineEntry[] = [{
     type: 'message',

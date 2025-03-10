@@ -307,6 +307,34 @@ describe('OpenHands Trajectory Converter', () => {
     });
   });
 
+  it('should handle git patch format', () => {
+    const gitPatchData = {
+      test_result: {
+        git_patch: 'diff --git a/file.txt b/file.txt\nindex 123..456 789\n--- a/file.txt\n+++ b/file.txt\n@@ -1,1 +1,1 @@\n-old\n+new'
+      }
+    };
+
+    const entries = convertOpenHandsTrajectory(gitPatchData);
+    expect(entries).toHaveLength(1);
+    expect(entries[0]).toMatchObject({
+      type: 'message',
+      title: 'Git Patch',
+      content: gitPatchData.test_result.git_patch,
+      actorType: 'System'
+    });
+  });
+
+  it('should handle invalid formats with error', () => {
+    // Invalid format - not an array or object with entries
+    expect(() => convertOpenHandsTrajectory({} as any)).toThrow('Invalid trajectory format');
+
+    // Invalid format - entries is not an array
+    expect(() => convertOpenHandsTrajectory({ entries: 'not an array' } as any)).toThrow('Events must be an array');
+
+    // Invalid format - test_result without git_patch
+    expect(() => convertOpenHandsTrajectory({ test_result: {} } as any)).toThrow('Invalid trajectory format');
+  });
+
   it('should correctly process the message "Please read the README" through all steps', () => {
     // Step 1: Test the raw trajectory entry
     const trajectoryEntry = {
