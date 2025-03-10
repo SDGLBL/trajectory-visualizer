@@ -259,6 +259,54 @@ describe('OpenHands Trajectory Converter', () => {
     });
   });
 
+  it('should handle new format with entries array', () => {
+    const newFormatData = {
+      entries: [
+        {
+          id: 1,
+          timestamp: '2025-03-07T17:45:00.000Z',
+          type: 'message',
+          content: 'Hello, I need help with my code.',
+          source: 'user',
+          observation: 'user_message'
+        },
+        {
+          id: 2,
+          timestamp: '2025-03-07T17:45:10.000Z',
+          type: 'thought',
+          content: 'Let me analyze the code and identify potential issues.',
+          source: 'assistant',
+          observation: 'assistant_message'
+        }
+      ]
+    };
+
+    const result = convertOpenHandsTrajectory(newFormatData);
+
+    // First entry is always a system message
+    expect(result[0]).toMatchObject({
+      type: 'message',
+      actorType: 'System',
+      title: 'Starting trajectory visualization'
+    });
+
+    // Second entry is the user message
+    expect(result[1]).toMatchObject({
+      type: 'message',
+      timestamp: '2025-03-07T17:45:00.000Z',
+      content: 'Hello, I need help with my code.',
+      actorType: 'User'
+    });
+
+    // Third entry is the assistant message
+    expect(result[2]).toMatchObject({
+      type: 'message',
+      timestamp: '2025-03-07T17:45:10.000Z',
+      content: 'Let me analyze the code and identify potential issues.',
+      actorType: 'Assistant'
+    });
+  });
+
   it('should correctly process the message "Please read the README" through all steps', () => {
     // Step 1: Test the raw trajectory entry
     const trajectoryEntry = {

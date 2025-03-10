@@ -27,7 +27,9 @@ function getActorType(source: string | undefined): 'User' | 'Assistant' | 'Syste
   return 'Assistant';
 }
 
-export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHandsTimelineEntry[] {
+export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] }): OpenHandsTimelineEntry[] {
+  // Handle new format with entries array
+  const events = Array.isArray(trajectory) ? trajectory : trajectory.entries;
   // First entry is always a message showing the start
   const entries: OpenHandsTimelineEntry[] = [{
     type: 'message',
@@ -39,7 +41,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[]): OpenHa
     path: ''
   } as TimelineEntry];
 
-  for (const event of trajectory) {
+  for (const event of events) {
     // Skip environment state changes
     if (event.source === 'environment' && event.observation === 'agent_state_changed') {
       continue;
