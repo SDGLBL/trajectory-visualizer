@@ -310,16 +310,34 @@ describe('OpenHands Trajectory Converter', () => {
   it('should handle git patch format', () => {
     const gitPatchData = {
       test_result: {
-        git_patch: 'diff --git a/file.txt b/file.txt\nindex 123..456 789\n--- a/file.txt\n+++ b/file.txt\n@@ -1,1 +1,1 @@\n-old\n+new'
+        git_patch: 'diff --git a/file1.txt b/file1.txt\nindex 123..456 789\n--- a/file1.txt\n+++ b/file1.txt\n@@ -1,1 +1,1 @@\n-old\n+new\ndiff --git a/file2.txt b/file2.txt\nindex 789..012 345\n--- a/file2.txt\n+++ b/file2.txt\n@@ -1,1 +1,1 @@\n-foo\n+bar'
       }
     };
 
     const entries = convertOpenHandsTrajectory(gitPatchData);
-    expect(entries).toHaveLength(1);
+    expect(entries).toHaveLength(3); // Git patch message + 2 file changes
+
+    // First entry is the git patch
     expect(entries[0]).toMatchObject({
       type: 'message',
       title: 'Git Patch',
       content: gitPatchData.test_result.git_patch,
+      actorType: 'System'
+    });
+
+    // Second entry is the first file change
+    expect(entries[1]).toMatchObject({
+      type: 'edit',
+      title: 'Changes in file1.txt',
+      path: 'file1.txt',
+      actorType: 'System'
+    });
+
+    // Third entry is the second file change
+    expect(entries[2]).toMatchObject({
+      type: 'edit',
+      title: 'Changes in file2.txt',
+      path: 'file2.txt',
       actorType: 'System'
     });
   });
