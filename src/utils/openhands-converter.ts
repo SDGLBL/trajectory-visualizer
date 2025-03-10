@@ -36,7 +36,30 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
   } else if ('entries' in trajectory) {
     events = trajectory.entries;
   } else if ('history' in trajectory) {
-    return trajectory.history;
+    // Convert history entries to timeline format
+    return trajectory.history.map(entry => {
+      const timelineEntry: TimelineEntry = {
+        type: entry.action === 'read' ? 'search' : entry.action === 'message' ? 'message' : 'command',
+        timestamp: entry.timestamp,
+        title: entry.message,
+        content: entry.args?.content || entry.message,
+        actorType: entry.source === 'user' ? 'User' : entry.source === 'agent' ? 'Assistant' : 'System',
+        command: '',
+        path: entry.args?.path || ''
+      };
+
+      // Add command for execute_bash action
+      if (entry.action === 'execute_bash' && entry.args?.command) {
+        timelineEntry.command = entry.args.command;
+      }
+
+      // Add path for str_replace_editor action
+      if (entry.action === 'str_replace_editor' && entry.args?.path) {
+        timelineEntry.path = entry.args.path;
+      }
+
+      return timelineEntry;
+    });
   } else if ('test_result' in trajectory && 'git_patch' in trajectory.test_result) {
     // Convert git patch to timeline entries
     const entries: TimelineEntry[] = [];

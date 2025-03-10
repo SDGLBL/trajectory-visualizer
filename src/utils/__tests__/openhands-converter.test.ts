@@ -311,24 +311,68 @@ describe('OpenHands Trajectory Converter', () => {
     const historyData = {
       history: [
         {
-          id: 1,
+          id: 0,
           timestamp: '2025-03-07T17:45:00.000Z',
-          type: 'message',
-          content: 'Hello, I need help with my code.',
-          actorType: 'User'
+          source: 'user',
+          message: 'Hello, I need help with my code.',
+          action: 'message',
+          args: {
+            content: 'Hello, I need help with my code.'
+          }
+        },
+        {
+          id: 1,
+          timestamp: '2025-03-07T17:45:10.000Z',
+          source: 'agent',
+          message: 'Let me check the code.',
+          action: 'read',
+          args: {
+            path: '/workspace/code.py',
+            content: 'def hello():\n    print("Hello")'
+          }
         },
         {
           id: 2,
-          timestamp: '2025-03-07T17:45:10.000Z',
-          type: 'thought',
-          content: 'Let me analyze the code and identify potential issues.',
-          actorType: 'Assistant'
+          timestamp: '2025-03-07T17:45:20.000Z',
+          source: 'agent',
+          message: 'Running tests',
+          action: 'execute_bash',
+          args: {
+            command: 'python -m pytest'
+          }
         }
       ]
     };
 
     const entries = convertOpenHandsTrajectory(historyData);
-    expect(entries).toEqual(historyData.history);
+    
+    // First entry is a message
+    expect(entries[0]).toMatchObject({
+      type: 'message',
+      timestamp: '2025-03-07T17:45:00.000Z',
+      title: 'Hello, I need help with my code.',
+      content: 'Hello, I need help with my code.',
+      actorType: 'User'
+    });
+
+    // Second entry is a search (read)
+    expect(entries[1]).toMatchObject({
+      type: 'search',
+      timestamp: '2025-03-07T17:45:10.000Z',
+      title: 'Let me check the code.',
+      content: 'def hello():\n    print("Hello")',
+      actorType: 'Assistant',
+      path: '/workspace/code.py'
+    });
+
+    // Third entry is a command
+    expect(entries[2]).toMatchObject({
+      type: 'command',
+      timestamp: '2025-03-07T17:45:20.000Z',
+      title: 'Running tests',
+      actorType: 'Assistant',
+      command: 'python -m pytest'
+    });
   });
 
   it('should handle git patch format', () => {
