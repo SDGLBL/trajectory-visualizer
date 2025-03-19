@@ -6,6 +6,7 @@ import RunDetails from './components/RunDetails';
 import RunDetailsSkeleton from './components/loading/RunDetailsSkeleton';
 import { WorkflowRun } from './types';
 import { UploadTrajectory } from './components/upload/UploadTrajectory';
+import { EvaluationUpload } from './components/upload/EvaluationUpload';
 
 const TokenPrompt: React.FC<{ isDark?: boolean }> = ({ isDark = false }) => {
   const [token, setToken] = useState('');
@@ -408,6 +409,10 @@ const App: React.FC<{ router?: boolean }> = ({ router = true }) => {
                   <UploadTrajectory onUpload={handleTrajectoryUpload} />
                 </div>
 
+                <div>
+                  <EvaluationUpload onUpload={handleTrajectoryUpload} />
+                </div>
+
                 {!localStorage.getItem('github_token') ? (
                   <div>
                     <h2 className={`text-lg font-medium mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -444,6 +449,10 @@ const App: React.FC<{ router?: boolean }> = ({ router = true }) => {
                     Or Upload OpenHands Trajectory
                   </h2>
                   <UploadTrajectory onUpload={handleTrajectoryUpload} />
+                </div>
+                
+                <div>
+                  <EvaluationUpload onUpload={handleTrajectoryUpload} />
                 </div>
               </div>
             </div>

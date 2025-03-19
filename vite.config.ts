@@ -10,6 +10,12 @@ export default defineConfig({
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
+    allowedHosts: [
+      'work-1-bjpunfevoqjrunmd.prod-runtime.all-hands.dev',
+      'work-2-bjpunfevoqjrunmd.prod-runtime.all-hands.dev',
+      'localhost'
+    ],
+    cors: true,
   },
   build: {
     outDir: 'build',

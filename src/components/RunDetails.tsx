@@ -7,6 +7,7 @@ import { TimelineEntry } from './timeline/types';
 import ArtifactDetails from './artifacts/ArtifactDetails';
 import RunHeader from './header/RunHeader';
 import { convertOpenHandsTrajectory } from '../utils/openhands-converter';
+import JsonlViewer from '../components/jsonl-viewer/JsonlViewer';
 
 interface RunDetailsProps {
   owner: string;
@@ -75,6 +76,11 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
         return;
       }
 
+      // Skip if we're viewing a JSONL file
+      if (artifactContent?.content?.fileType === 'jsonl') {
+        return;
+      }
+
       // Get the timeline entries using our helper
       const timelineEntries = getTimelineEntries();
       const maxSteps = timelineEntries.length - 1;
@@ -116,7 +122,7 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
     
     // Cleanup
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [getTimelineEntries, selectedStepIndex]);
+  }, [getTimelineEntries, selectedStepIndex, artifactContent]);
 
   const handleCommandClick = useCallback((command: string): void => {
     navigator.clipboard.writeText(command.replace(/^\$ /, ''));
@@ -221,6 +227,15 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
     return (
       <div className="p-4 bg-red-100 dark:bg-red-900/10 rounded-lg">
         <p className="text-red-500 dark:text-red-400">{error || 'Failed to load run details'}</p>
+      </div>
+    );
+  }
+
+  // Check if we're dealing with a JSONL file
+  if (artifactContent?.content?.fileType === 'jsonl' && artifactContent?.content?.jsonlContent) {
+    return (
+      <div className="flex flex-col h-full overflow-hidden">
+        <JsonlViewer content={artifactContent.content.jsonlContent} />
       </div>
     );
   }
