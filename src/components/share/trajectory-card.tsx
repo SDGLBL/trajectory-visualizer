@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
+import { JsonModal } from "./json-modal";
 
 interface TrajectoryTempateProps {
   children: React.ReactNode;
   className?: React.HTMLAttributes<HTMLDivElement>["className"];
+  originalJson?: any;
 }
 
 interface TrajectoryCardType extends React.FC<TrajectoryTempateProps> {
@@ -11,7 +13,9 @@ interface TrajectoryCardType extends React.FC<TrajectoryTempateProps> {
   Body: React.FC<TrajectoryCardBodyProps>;
 }
 
-export const TrajectoryCard: TrajectoryCardType = ({ children, className }) => {
+export const TrajectoryCard: TrajectoryCardType = ({ children, className, originalJson }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <section
       className={clsx(
@@ -20,6 +24,26 @@ export const TrajectoryCard: TrajectoryCardType = ({ children, className }) => {
       )}
     >
       {children}
+      {originalJson && (
+        <>
+          <div className="flex justify-end px-2 py-1 border-t border-gray-200 dark:border-gray-700">
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="text-[10px] text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 flex items-center"
+            >
+              <svg className="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+              </svg>
+              Show JSON
+            </button>
+          </div>
+          <JsonModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            data={originalJson}
+          />
+        </>
+      )}
     </section>
   );
 };

@@ -11,3 +11,5 @@ export * from "./edit-action";
 export * from "./edit-observation";
 export * from "./user-message";
 export * from "./error-observation";
+export * from "./think-action";
+export * from "./think-observation";

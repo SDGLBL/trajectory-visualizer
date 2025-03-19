@@ -17,7 +17,9 @@ import {
   isReadAction,
   isReadObservation,
   isEditAction,
-  isEditObservation
+  isEditObservation,
+  isThinkAction,
+  isThinkObservation
 } from "../../utils/share";
 import {
   AgentStateChangeComponent,
@@ -32,7 +34,9 @@ import {
   ReadObservationComponent,
   EditActionComponent,
   EditObservationComponent,
-  ErrorObservationComponent
+  ErrorObservationComponent,
+  ThinkActionComponent,
+  ThinkObservationComponent
 } from "../share/trajectory-list-items";
 import { CSyntaxHighlighter } from "../syntax-highlighter";
 import { TrajectoryCard } from "../share/trajectory-card";
@@ -318,6 +322,10 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
                       return <EditActionComponent key={index} item={item} />;
                     } else if (isEditObservation(item)) {
                       return <EditObservationComponent key={index} observation={item} />;
+                    } else if (isThinkAction(item)) {
+                      return <ThinkActionComponent key={index} action={item} />;
+                    } else if (isThinkObservation(item)) {
+                      return <ThinkObservationComponent key={index} observation={item} />;
                     } else {
                       return (
                         <TrajectoryCard key={index}>

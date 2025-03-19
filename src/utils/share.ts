@@ -13,7 +13,9 @@ import {
   ReadAction, 
   ReadObservation, 
   EditAction, 
-  EditObservation 
+  EditObservation,
+  ThinkAction,
+  ThinkObservation
 } from '../types/share';
 
 export const isConfig = (data: TrajectoryItem): data is Config =>
@@ -60,6 +62,12 @@ export const isEditAction = (data: TrajectoryItem): data is EditAction =>
 
 export const isEditObservation = (data: TrajectoryItem): data is EditObservation =>
   "observation" in data && data.observation === "edit" && "source" in data && data.source === "agent";
+
+export const isThinkAction = (data: TrajectoryItem): data is ThinkAction =>
+  "action" in data && data.action === "think" && "source" in data && data.source === "agent";
+
+export const isThinkObservation = (data: TrajectoryItem): data is ThinkObservation =>
+  "observation" in data && data.observation === "think" && "source" in data && data.source === "agent";
 
 // Convert a trajectory item to a timeline entry
 export const trajectoryItemToTimelineEntry = (item: TrajectoryItem) => {

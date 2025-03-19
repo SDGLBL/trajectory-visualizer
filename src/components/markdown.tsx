@@ -22,15 +22,23 @@ export const CMarkdown: React.FC<MarkdownProps> = ({ children }) => {
                 language={match[1]}
                 PreTag="div"
                 customStyle={{
-                  fontSize: '0.7rem',
-                  margin: '0.4rem 0',
+                  fontSize: '0.65rem',
+                  margin: '0.3rem 0',
+                  padding: '0.4rem',
+                  lineHeight: '0.9rem',
+                }}
+                codeTagProps={{
+                  style: {
+                    fontSize: '0.65rem',
+                    lineHeight: '0.9rem',
+                  }
                 }}
                 {...props}
               >
                 {String(children).replace(/\n$/, '')}
               </SyntaxHighlighter>
             ) : (
-              <code className={`text-xs ${className}`} {...props}>
+              <code className={`text-[10px] ${className}`} {...props}>
                 {children}
               </code>
             );

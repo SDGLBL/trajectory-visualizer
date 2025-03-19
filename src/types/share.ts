@@ -203,4 +203,29 @@ export interface EditObservation {
   };
 }
 
-export type TrajectoryItem = AgentStateChange | UserMessage | AssistantMessage | CommandAction | CommandObservation | IPythonAction | IPythonObservation | FinishAction | Config | ErrorObservation | NullObservation | ReadAction | ReadObservation | EditAction | EditObservation;
+export interface ThinkAction {
+  id: number;
+  action: "think";
+  message: string;
+  source: "agent";
+  timestamp: string;
+  args: {
+    thought: string;
+  };
+  tool_call_metadata?: Record<string, any>;
+  llm_metrics?: Record<string, any>;
+}
+
+export interface ThinkObservation {
+  id: number;
+  cause: number;
+  observation: "think";
+  message: string;
+  content: string;
+  source: "agent";
+  timestamp: string;
+  extras: Record<string, unknown>;
+  tool_call_metadata?: Record<string, any>;
+}
+
+export type TrajectoryItem = AgentStateChange | UserMessage | AssistantMessage | CommandAction | CommandObservation | IPythonAction | IPythonObservation | FinishAction | Config | ErrorObservation | NullObservation | ReadAction | ReadObservation | EditAction | EditObservation | ThinkAction | ThinkObservation;
