@@ -38,8 +38,11 @@ function mapEntryTypeToTimelineType(type: string): TimelineEntry['type'] {
     case 'error':
       return 'error';
     case 'message':
+      return 'message';
     case 'thought':
+      return 'message'; // Thoughts are displayed as messages with special styling
     default:
+      console.log('Unknown entry type:', type);
       return 'message';
   }
 }
@@ -81,6 +84,8 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
     return (trajectory as HistoryFormat).history.map(entry => {
       // Handle the format in sample-trajectory.jsonl
       if ('type' in entry && 'content' in entry && 'actorType' in entry) {
+        console.log('Processing entry with type:', entry.type);
+        
         const timelineEntry: TimelineEntry = {
           type: mapEntryTypeToTimelineType(entry.type),
           timestamp: entry.timestamp,
@@ -90,6 +95,8 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
           command: entry.command || '',
           path: entry.path || ''
         };
+
+        console.log('Mapped to timeline type:', timelineEntry.type);
 
         // Handle thought type
         if (entry.type === 'thought') {

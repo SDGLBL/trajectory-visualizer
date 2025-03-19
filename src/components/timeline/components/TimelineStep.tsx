@@ -72,19 +72,26 @@ export const TimelineStep: React.FC<TimelineStepProps> = memo(({
 
             {/* Content sections */}
             <div className="space-y-1 mt-1.5">
+              {/* Thought content */}
               {entry.thought && (
                 <div className="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-900/20 rounded px-2 py-1">
                   <MarkdownContent content={entry.thought} />
                 </div>
               )}
+              
+              {/* Regular content */}
               {entry.content && (
                 <div className="text-xs text-gray-600 dark:text-gray-300">
                   <MarkdownContent content={entry.content} />
                 </div>
               )}
+              
+              {/* Command content */}
               {entry.command && (
                 <CommandBlock command={entry.command} onCopy={onCommandClick} />
               )}
+              
+              {/* File path for edits */}
               {entry.path && (
                 <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
                   <code className="font-mono bg-gray-50/50 dark:bg-gray-800/50 px-1 rounded">
