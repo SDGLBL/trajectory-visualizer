@@ -9,8 +9,11 @@ interface IPythonObservationProps {
 
 export const IPythonObservationComponent: React.FC<IPythonObservationProps> = ({ observation }) => {
   return (
-    <TrajectoryCard className="bg-gray-100 dark:bg-gray-800/50">
-      <TrajectoryCard.Header className="bg-gray-300 dark:bg-gray-700">IPython Output</TrajectoryCard.Header>
+    <TrajectoryCard 
+      className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700"
+      originalJson={observation}
+    >
+      <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">IPython Output</TrajectoryCard.Header>
       <TrajectoryCard.Body>
         <CSyntaxHighlighter language="python">{observation.content}</CSyntaxHighlighter>
       </TrajectoryCard.Body>

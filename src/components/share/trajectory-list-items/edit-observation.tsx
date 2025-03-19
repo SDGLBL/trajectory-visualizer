@@ -38,12 +38,15 @@ export const EditObservationComponent: React.FC<EditObservationProps> = ({ obser
   const language = getLanguage(observation.extras.path);
 
   return (
-    <TrajectoryCard className="bg-gray-100 dark:bg-gray-800/50">
-      <TrajectoryCard.Header className="bg-gray-300 dark:bg-gray-700">
+    <TrajectoryCard 
+      className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700"
+      originalJson={observation}
+    >
+      <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">
         File Edited: {observation.extras.path}
       </TrajectoryCard.Header>
       <TrajectoryCard.Body>
-        <div className="text-sm font-medium mb-2">Changes:</div>
+        <div className="text-xs font-medium mb-1">Changes:</div>
         <CSyntaxHighlighter language={language}>{observation.content}</CSyntaxHighlighter>
       </TrajectoryCard.Body>
     </TrajectoryCard>

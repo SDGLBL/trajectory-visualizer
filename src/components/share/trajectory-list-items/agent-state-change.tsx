@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrajectoryCard } from "../trajectory-card";
 import { AgentStateChange } from '../../../types/share';
+import { CMarkdown } from '../../markdown';
 
 interface AgentStateChangeProps {
   state: AgentStateChange;
@@ -18,10 +19,13 @@ export const AgentStateChangeComponent: React.FC<AgentStateChangeProps> = ({ sta
   }
   
   return (
-    <TrajectoryCard className="bg-gray-100 dark:bg-gray-800/50">
-      <TrajectoryCard.Header className="bg-gray-300 dark:bg-gray-700">Agent State: {stateText}</TrajectoryCard.Header>
+    <TrajectoryCard 
+      className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700"
+      originalJson={state}
+    >
+      <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">Agent State: {stateText}</TrajectoryCard.Header>
       <TrajectoryCard.Body>
-        {thought && <div>{thought}</div>}
+        {thought && <CMarkdown>{thought}</CMarkdown>}
       </TrajectoryCard.Body>
     </TrajectoryCard>
   );
