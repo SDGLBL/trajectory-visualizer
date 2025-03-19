@@ -19,7 +19,7 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   const [settings, setSettings] = useState<JsonlViewerSettingsType>({
     sortField: 'instance_id',
     sortDirection: 'asc',
-    displayFields: ['metrics.accumulated_cost', 'test_result.report.resolved']
+    displayFields: ['metrics.accumulated_cost', 'test_result.report.resolved', 'len(history)']
   });
   const [originalEntries, setOriginalEntries] = useState<JsonlEntry[]>([]);
 

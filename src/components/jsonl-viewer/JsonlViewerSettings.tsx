@@ -15,18 +15,14 @@ export interface JsonlViewerSettings {
 const COMMON_SORT_FIELDS = [
   { value: 'instance_id', label: 'Instance ID' },
   { value: 'metrics.accumulated_cost', label: 'Cost (metrics.accumulated_cost)' },
-  { value: 'metrics.execution_time', label: 'Execution Time (metrics.execution_time)' },
   { value: 'test_result.report.resolved', label: 'Resolved Status (test_result.report.resolved)' },
-  { value: 'test_result.report.score', label: 'Score (test_result.report.score)' },
   { value: 'len(history)', label: 'History Length (len(history))' }
 ];
 
 // Common display fields
 const COMMON_DISPLAY_FIELDS = [
   'metrics.accumulated_cost',
-  'metrics.execution_time',
   'test_result.report.resolved',
-  'test_result.report.score',
   'len(history)'
 ];
 
@@ -39,7 +35,9 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(settings.sortDirection);
   const [displayFields, setDisplayFields] = useState<string[]>(settings.displayFields);
   const [newField, setNewField] = useState('');
-  const [customSortField, setCustomSortField] = useState('');
+  const [customSortField, setCustomSortField] = useState(
+    COMMON_SORT_FIELDS.some(f => f.value === settings.sortField) ? '' : settings.sortField
+  );
 
   const handleSave = () => {
     onSettingsChange({
