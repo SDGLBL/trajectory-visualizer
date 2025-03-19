@@ -10,7 +10,7 @@ interface MarkdownProps {
 
 export const CMarkdown: React.FC<MarkdownProps> = ({ children }) => {
   return (
-    <div className="text-sm prose dark:prose-invert prose-sm max-w-none">
+    <div className="text-xs prose dark:prose-invert prose-xs max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
@@ -22,26 +22,28 @@ export const CMarkdown: React.FC<MarkdownProps> = ({ children }) => {
                 language={match[1]}
                 PreTag="div"
                 customStyle={{
-                  fontSize: '0.8rem',
-                  margin: '0.5rem 0',
+                  fontSize: '0.7rem',
+                  margin: '0.4rem 0',
                 }}
                 {...props}
               >
                 {String(children).replace(/\n$/, '')}
               </SyntaxHighlighter>
             ) : (
-              <code className={className} {...props}>
+              <code className={`text-xs ${className}`} {...props}>
                 {children}
               </code>
             );
           },
-          p: ({ children }) => <p className="my-1.5">{children}</p>,
-          h1: ({ children }) => <h1 className="text-lg font-bold my-2">{children}</h1>,
-          h2: ({ children }) => <h2 className="text-base font-bold my-1.5">{children}</h2>,
-          h3: ({ children }) => <h3 className="text-sm font-bold my-1">{children}</h3>,
-          ul: ({ children }) => <ul className="list-disc pl-5 my-1.5">{children}</ul>,
-          ol: ({ children }) => <ol className="list-decimal pl-5 my-1.5">{children}</ol>,
+          p: ({ children }) => <p className="my-1 text-xs">{children}</p>,
+          h1: ({ children }) => <h1 className="text-sm font-bold my-1.5">{children}</h1>,
+          h2: ({ children }) => <h2 className="text-xs font-bold my-1">{children}</h2>,
+          h3: ({ children }) => <h3 className="text-xs font-bold my-0.5">{children}</h3>,
+          ul: ({ children }) => <ul className="list-disc pl-4 my-1 text-xs">{children}</ul>,
+          ol: ({ children }) => <ol className="list-decimal pl-4 my-1 text-xs">{children}</ol>,
           li: ({ children }) => <li className="my-0.5">{children}</li>,
+          a: ({ children, href }) => <a href={href} className="text-blue-500 hover:underline">{children}</a>,
+          blockquote: ({ children }) => <blockquote className="border-l-2 border-gray-300 dark:border-gray-600 pl-2 my-1 text-xs text-gray-600 dark:text-gray-400">{children}</blockquote>,
         }}
       >
         {children}

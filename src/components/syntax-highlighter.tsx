@@ -13,11 +13,11 @@ export const CSyntaxHighlighter: React.FC<CSyntaxHighlighterProps> = ({ language
       language={language}
       style={vscDarkPlus}
       customStyle={{
-        borderRadius: '0.375rem',
+        borderRadius: '0.25rem',
         margin: 0,
-        padding: '0.75rem',
-        fontSize: '0.8rem',
-        lineHeight: '1.2rem',
+        padding: '0.5rem',
+        fontSize: '0.7rem',
+        lineHeight: '1rem',
       }}
     >
       {children}
