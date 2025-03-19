@@ -20,13 +20,12 @@ export const UploadTrajectory: React.FC<UploadTrajectoryProps> = ({ onUpload }) 
         const content = JSON.parse(reader.result as string);
         onUpload({
           content: {
-            trajectory: content,
-            fileType: 'json'
+            trajectory: content
           }
         });
       } catch (error) {
         console.error('Failed to process file:', error);
-        alert('Failed to process the file. Please make sure it is a valid JSON file.');
+        alert('Failed to parse the trajectory file. Please make sure it is a valid JSON file.');
       }
     };
 
@@ -74,7 +73,7 @@ export const UploadTrajectory: React.FC<UploadTrajectoryProps> = ({ onUpload }) 
           }
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-          Supported format: .json (single trajectory)
+          Only .json files are supported
         </p>
       </div>
     </div>
