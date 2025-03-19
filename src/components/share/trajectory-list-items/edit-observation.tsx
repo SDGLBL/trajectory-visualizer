@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CSyntaxHighlighter } from "../../syntax-highlighter";
 import { TrajectoryCard } from "../trajectory-card";
 import { EditObservation } from '../../../types/share';
+import { DiffViewer } from '../../diff-viewer';
 
 interface EditObservationProps {
   observation: EditObservation;
 }
 
 export const EditObservationComponent: React.FC<EditObservationProps> = ({ observation }) => {
+  const [showDiff, setShowDiff] = useState(true);
+  const [showRawOutput, setShowRawOutput] = useState(false);
+  
   // Determine language based on file extension
   const getLanguage = (path: string) => {
     const extension = path.split('.').pop()?.toLowerCase();
@@ -43,11 +47,44 @@ export const EditObservationComponent: React.FC<EditObservationProps> = ({ obser
       originalJson={observation}
     >
       <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">
-        File Edited: {observation.extras.path}
+        <div className="flex justify-between items-center w-full">
+          <span>File Edited: {observation.extras.path}</span>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={() => setShowDiff(!showDiff)} 
+              className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+            >
+              {showDiff ? 'Hide Diff' : 'Show Diff'}
+            </button>
+            <button 
+              onClick={() => setShowRawOutput(!showRawOutput)} 
+              className="text-xs px-2 py-1 rounded bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+            >
+              {showRawOutput ? 'Hide Raw Output' : 'Show Raw Output'}
+            </button>
+          </div>
+        </div>
       </TrajectoryCard.Header>
       <TrajectoryCard.Body>
-        <div className="text-xs font-medium mb-1">Changes:</div>
-        <CSyntaxHighlighter language={language}>{observation.content}</CSyntaxHighlighter>
+        {showDiff && (
+          <div className="mb-3">
+            <div className="text-xs font-medium mb-1">Changes:</div>
+            <div className="border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
+              <DiffViewer 
+                oldStr={observation.extras.old_content} 
+                newStr={observation.extras.new_content} 
+                language={language}
+              />
+            </div>
+          </div>
+        )}
+        
+        {showRawOutput && (
+          <div className="mt-3">
+            <div className="text-xs font-medium mb-1">Raw Output:</div>
+            <CSyntaxHighlighter language={language}>{observation.content}</CSyntaxHighlighter>
+          </div>
+        )}
       </TrajectoryCard.Body>
     </TrajectoryCard>
   );
