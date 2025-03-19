@@ -1,10 +1,8 @@
 import { TimelineEntry } from '../components/timeline/types';
 import { convertOpenHandsTrajectory } from './openhands-converter';
+import { TrajectoryData } from '../types/trajectory';
 
-export interface JsonlEntry {
-  history: any[];
-  [key: string]: any;
-}
+export type JsonlEntry = TrajectoryData;
 
 export interface ParsedJsonlResult {
   entries: JsonlEntry[];
@@ -23,11 +21,15 @@ export function parseJsonlFile(content: string): JsonlEntry[] {
     try {
       const parsedLine = JSON.parse(line);
       if (!parsedLine.history || !Array.isArray(parsedLine.history)) {
-        console.warn(`Line ${index + 1} does not have a valid history array`);
+        // Log warning but still return the parsed line
+        return {
+          ...parsedLine,
+          _warning: `Line ${index + 1} does not have a valid history array`
+        };
       }
       return parsedLine;
     } catch (error) {
-      console.error(`Error parsing line ${index + 1}:`, error);
+      // Return an error object instead of logging to console
       return { history: [], error: `Failed to parse line ${index + 1}` };
     }
   });

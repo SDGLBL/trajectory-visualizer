@@ -7,6 +7,7 @@ import RunDetailsSkeleton from './components/loading/RunDetailsSkeleton';
 import { WorkflowRun } from './types';
 import { UploadTrajectory } from './components/upload/UploadTrajectory';
 import { EvaluationUpload } from './components/upload/EvaluationUpload';
+import { UploadContent } from './types/upload';
 
 const TokenPrompt: React.FC<{ isDark?: boolean }> = ({ isDark = false }) => {
   const [token, setToken] = useState('');
@@ -292,7 +293,7 @@ const App: React.FC<{ router?: boolean }> = ({ router = true }) => {
     const { owner, repo } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    const [uploadedContent, setUploadedContent] = useState<any | null>(null);
+    const [uploadedContent, setUploadedContent] = useState<UploadContent | null>(null);
     
     // Check if we should restore from localStorage on initial load
     useEffect(() => {
@@ -341,7 +342,7 @@ const App: React.FC<{ router?: boolean }> = ({ router = true }) => {
     };
 
     // Handle trajectory upload
-    const handleTrajectoryUpload = (content: any) => {
+    const handleTrajectoryUpload = (content: UploadContent) => {
       setUploadedContent(content);
     };
     

@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import { 
+  COMMON_SORT_FIELDS, 
+  COMMON_DISPLAY_FIELDS 
+} from '../../config/jsonl-viewer-config';
 
 export interface JsonlViewerSettingsProps {
   onSettingsChange: (settings: JsonlViewerSettings) => void;
@@ -10,21 +14,6 @@ export interface JsonlViewerSettings {
   sortDirection: 'asc' | 'desc';
   displayFields: string[];
 }
-
-// Common sort fields with descriptions
-const COMMON_SORT_FIELDS = [
-  { value: 'instance_id', label: 'Instance ID' },
-  { value: 'metrics.accumulated_cost', label: 'Cost (metrics.accumulated_cost)' },
-  { value: 'test_result.report.resolved', label: 'Resolved Status (test_result.report.resolved)' },
-  { value: 'len(history)', label: 'History Length (len(history))' }
-];
-
-// Common display fields
-const COMMON_DISPLAY_FIELDS = [
-  'metrics.accumulated_cost',
-  'test_result.report.resolved',
-  'len(history)'
-];
 
 const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({ 
   onSettingsChange, 

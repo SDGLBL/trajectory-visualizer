@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { UploadContent } from '../../types/upload';
 
 interface EvaluationUploadProps {
-  onUpload: (content: any) => void;
+  onUpload: (content: UploadContent) => void;
 }
 
 export const EvaluationUpload: React.FC<EvaluationUploadProps> = ({ onUpload }) => {

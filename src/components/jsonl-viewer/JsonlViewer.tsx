@@ -50,11 +50,13 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   const [currentEntryIndex, setCurrentEntryIndex] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [trajectoryItems, setTrajectoryItems] = useState<TrajectoryItem[]>([]);
-  const [settings, setSettings] = useState<JsonlViewerSettingsType>({
-    sortField: 'instance_id',
-    sortDirection: 'asc',
-    displayFields: ['metrics.accumulated_cost', 'test_result.report.resolved', 'len(history)']
-  });
+  const [settings, setSettings] = useState<JsonlViewerSettingsType>(
+    () => {
+      // Import here to avoid circular dependencies
+      const { DEFAULT_JSONL_VIEWER_SETTINGS } = require('../../config/jsonl-viewer-config');
+      return DEFAULT_JSONL_VIEWER_SETTINGS;
+    }
+  );
   const [originalEntries, setOriginalEntries] = useState<JsonlEntry[]>([]);
 
   // Parse the JSONL file on component mount or when content changes

@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { UploadContent } from '../../types/upload';
 
 interface UploadTrajectoryProps {
-  onUpload: (content: any) => void;
+  onUpload: (content: UploadContent) => void;
 }
 
 export const UploadTrajectory: React.FC<UploadTrajectoryProps> = ({ onUpload }) => {
@@ -20,7 +21,8 @@ export const UploadTrajectory: React.FC<UploadTrajectoryProps> = ({ onUpload }) 
         const content = JSON.parse(reader.result as string);
         onUpload({
           content: {
-            trajectory: content
+            trajectoryData: content,
+            fileType: 'trajectory'
           }
         });
       } catch (error) {
