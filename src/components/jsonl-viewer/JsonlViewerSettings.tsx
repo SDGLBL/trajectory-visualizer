@@ -180,7 +180,7 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
                   value={newField}
                   onChange={(e) => setNewField(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="e.g., test_result.report.resolved"
+                  placeholder="e.g., report.resolved"
                   className="flex-1 px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 />
                 <button
