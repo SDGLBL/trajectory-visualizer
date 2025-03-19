@@ -35,9 +35,6 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(settings.sortDirection);
   const [displayFields, setDisplayFields] = useState<string[]>(settings.displayFields);
   const [newField, setNewField] = useState('');
-  const [customSortField, setCustomSortField] = useState(
-    COMMON_SORT_FIELDS.some(f => f.value === settings.sortField) ? '' : settings.sortField
-  );
 
   const handleSave = () => {
     onSettingsChange({
@@ -65,20 +62,12 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
     }
   };
 
-  const handleSortFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (value === 'custom') {
-      // Don't change the sort field yet, wait for custom input
-      setCustomSortField(sortField);
-    } else {
-      setSortField(value);
-      setCustomSortField('');
-    }
+  const handleSortFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSortField(e.target.value);
   };
 
-  const handleCustomSortFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomSortField(e.target.value);
-    setSortField(e.target.value);
+  const handleSelectSortField = (field: string) => {
+    setSortField(field);
   };
 
   const handleAddCommonDisplayField = (field: string) => {
@@ -118,40 +107,40 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
               <div className="flex flex-col gap-2">
                 <div>
                   <label htmlFor="sort-field" className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Sort Field
+                    Sort Field (dot notation or len())
                   </label>
-                  <select
+                  <input
                     id="sort-field"
-                    value={COMMON_SORT_FIELDS.some(f => f.value === sortField) ? sortField : 'custom'}
+                    type="text"
+                    value={sortField}
                     onChange={handleSortFieldChange}
+                    placeholder="e.g., metrics.accumulated_cost or len(history)"
                     className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  >
-                    {COMMON_SORT_FIELDS.map(field => (
-                      <option key={field.value} value={field.value}>{field.label}</option>
-                    ))}
-                    <option value="custom">Custom Field...</option>
-                  </select>
+                  />
                 </div>
                 
-                {/* Custom sort field input */}
-                {!COMMON_SORT_FIELDS.some(f => f.value === sortField) && (
-                  <div>
-                    <label htmlFor="custom-sort-field" className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                      Custom Field (dot notation or len())
-                    </label>
-                    <input
-                      id="custom-sort-field"
-                      type="text"
-                      value={customSortField}
-                      onChange={handleCustomSortFieldChange}
-                      placeholder="e.g., metrics.accumulated_cost or len(history)"
-                      className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    />
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Tip: Use len(field) to sort by array length, e.g., len(history)
-                    </p>
+                {/* Common sort field options */}
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Common Fields:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {COMMON_SORT_FIELDS.map(field => (
+                      <button
+                        key={field.value}
+                        onClick={() => handleSelectSortField(field.value)}
+                        className={`px-2 py-1 text-xs rounded-md ${
+                          sortField === field.value
+                            ? 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 font-medium'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        {field.label}
+                      </button>
+                    ))}
                   </div>
-                )}
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    Tip: Use len(field) to sort by array length, e.g., len(history)
+                  </p>
+                </div>
                 
                 <div>
                   <label htmlFor="sort-direction" className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
