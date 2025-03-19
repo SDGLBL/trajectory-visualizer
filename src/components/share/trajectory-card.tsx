@@ -41,10 +41,12 @@ export const TrajectoryCard: TrajectoryCardType = ({ children, className, origin
     >
       {/* Render header with toggle button */}
       {header && (
-        <div className="flex items-center justify-between">
+        <div 
+          className="flex items-center justify-between cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
           <div className="flex-grow">{header}</div>
           <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
             className="px-2 py-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
             aria-label={isCollapsed ? "Expand" : "Collapse"}
           >
@@ -61,8 +63,14 @@ export const TrajectoryCard: TrajectoryCardType = ({ children, className, origin
         </div>
       )}
       
-      {/* Render body only if not collapsed */}
-      {!isCollapsed && body}
+      {/* Render body only if not collapsed, otherwise show hint */}
+      {!isCollapsed ? (
+        body
+      ) : (
+        <div className="px-2 py-1 text-[10px] text-gray-500 dark:text-gray-400 italic">
+          Content collapsed. Click the arrow icon in the top right to expand.
+        </div>
+      )}
       
       {originalJson && (
         <>
