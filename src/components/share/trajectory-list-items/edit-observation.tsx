@@ -71,8 +71,8 @@ export const EditObservationComponent: React.FC<EditObservationProps> = ({ obser
             <div className="text-xs font-medium mb-1">Changes:</div>
             <div className="border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
               <DiffViewer 
-                oldStr={observation.extras.old_content} 
-                newStr={observation.extras.new_content} 
+                oldStr={observation.extras.old_content || ''} 
+                newStr={observation.extras.new_content || ''} 
                 language={language}
               />
             </div>

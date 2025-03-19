@@ -14,12 +14,34 @@ export const DiffViewer: React.FC<DiffViewerProps> = ({
   splitView = true 
 }) => {
   // language is not used directly but kept for API consistency
+  const [isDarkMode, setIsDarkMode] = React.useState(false);
+  
+  // Check for dark mode on component mount and when the theme changes
+  React.useEffect(() => {
+    // Initial check
+    setIsDarkMode(document.documentElement.classList.contains('dark'));
+    
+    // Set up a MutationObserver to watch for class changes on the document element
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          setIsDarkMode(document.documentElement.classList.contains('dark'));
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    
+    // Clean up the observer on component unmount
+    return () => observer.disconnect();
+  }, []);
+  
   return (
     <ReactDiffViewer
-      oldValue={oldStr}
-      newValue={newStr}
+      oldValue={oldStr || ''}
+      newValue={newStr || ''}
       splitView={splitView}
-      useDarkTheme={document.documentElement.classList.contains('dark')}
+      useDarkTheme={isDarkMode}
       hideLineNumbers={false}
       showDiffOnly={false}
       styles={{

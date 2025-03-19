@@ -71,8 +71,8 @@ export const EditActionComponent: React.FC<EditActionProps> = ({ item }) => {
             <div className="text-xs font-medium mb-1">Changes:</div>
             <div className="border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
               <DiffViewer 
-                oldStr={item.args.old_content} 
-                newStr={item.args.new_content} 
+                oldStr={item.args.old_content || ''} 
+                newStr={item.args.new_content || ''} 
                 language={language}
               />
             </div>
