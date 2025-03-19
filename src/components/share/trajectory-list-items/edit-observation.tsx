@@ -48,7 +48,7 @@ export const EditObservationComponent: React.FC<EditObservationProps> = ({ obser
     >
       <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">
         <div className="flex justify-between items-center w-full">
-          <span>File Edited: {observation.extras.path}</span>
+          <span>File Edit Observation: {observation.extras.path}</span>
           <div className="flex items-center space-x-2">
             <button 
               onClick={() => setShowDiff(!showDiff)} 

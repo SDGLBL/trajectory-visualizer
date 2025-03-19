@@ -47,7 +47,7 @@ export const EditActionComponent: React.FC<EditActionProps> = ({ item }) => {
     >
       <TrajectoryCard.Header className="bg-orange-100 dark:bg-orange-800/50 text-orange-800 dark:text-orange-100">
         <div className="flex justify-between items-center w-full">
-          <span>Edit File: {item.args.path}</span>
+          <span>File Edit Action: {item.args.path}</span>
           <div className="flex items-center space-x-2">
             <button 
               onClick={() => setShowDiff(!showDiff)} 
