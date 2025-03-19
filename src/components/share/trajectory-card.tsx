@@ -33,7 +33,7 @@ const TrajectoryCardHeader: React.FC<TrajectoryCardHeaderProps> = ({ children, c
   return (
     <div
       className={clsx(
-        "rounded-t-md p-2 font-medium",
+        "rounded-t-md py-1.5 px-2 font-medium text-xs",
         className,
       )}
     >
@@ -48,9 +48,9 @@ interface TrajectoryCardBodyProps {
 
 const TrajectoryCardBody: React.FC<TrajectoryCardBodyProps> = ({ children }) => {
   return (
-    <div className="p-3 flex flex-col gap-4 overflow-auto">
+    <div className="p-2.5 flex flex-col gap-3 overflow-auto">
       {React.Children.map(children, (child, index) => {
-        if (typeof child === "string") return <div key={index}>{child}</div>;
+        if (typeof child === "string") return <div key={index} className="text-sm">{child}</div>;
         return child;
       })}
     </div>

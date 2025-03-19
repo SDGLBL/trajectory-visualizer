@@ -15,9 +15,9 @@ export const CSyntaxHighlighter: React.FC<CSyntaxHighlighterProps> = ({ language
       customStyle={{
         borderRadius: '0.375rem',
         margin: 0,
-        padding: '1rem',
-        fontSize: '0.875rem',
-        lineHeight: '1.25rem',
+        padding: '0.75rem',
+        fontSize: '0.8rem',
+        lineHeight: '1.2rem',
       }}
     >
       {children}
