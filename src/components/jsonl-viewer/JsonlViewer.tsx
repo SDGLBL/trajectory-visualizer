@@ -1,9 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { JsonlEntry, parseJsonlFile } from '../../utils/jsonl-parser';
 import JsonlViewerSettings, { JsonlViewerSettings as JsonlViewerSettingsType } from './JsonlViewerSettings';
 import { getNestedValue, formatValueForDisplay } from '../../utils/object-utils';
-import TrajectoryList from '../share/trajectory-list';
 import { TrajectoryItem } from '../../types/share';
+import JsonVisualizer from '../json-visualizer/JsonVisualizer';
+import {
+  isAgentStateChange,
+  isUserMessage,
+  isAssistantMessage,
+  isCommandAction,
+  isCommandObservation,
+  isIPythonAction,
+  isIPythonObservation,
+  isFinishAction,
+  isErrorObservation,
+  isReadAction,
+  isReadObservation,
+  isEditAction,
+  isEditObservation
+} from "../../utils/share";
+import {
+  AgentStateChangeComponent,
+  UserMessageComponent,
+  AssistantMessageComponent,
+  CommandActionComponent,
+  CommandObservationComponent,
+  IPythonActionComponent,
+  IPythonObservationComponent,
+  FinishActionComponent,
+  ReadActionComponent,
+  ReadObservationComponent,
+  EditActionComponent,
+  EditObservationComponent,
+  ErrorObservationComponent
+} from "../share/trajectory-list-items";
+import { CSyntaxHighlighter } from "../syntax-highlighter";
+import { TrajectoryCard } from "../share/trajectory-card";
 
 interface JsonlViewerProps {
   content: string;
@@ -171,6 +203,33 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
     );
   }
 
+  // Get the current entry without the history field for the JSON visualizer
+  const currentEntryWithoutHistory = useMemo(() => {
+    if (!entries[currentEntryIndex]) return null;
+    return { ...entries[currentEntryIndex], history: undefined };
+  }, [entries, currentEntryIndex]);
+
+  // Function to filter out unwanted trajectory items
+  const shouldDisplayItem = (item: TrajectoryItem): boolean => {
+    // Filter out change_agent_state actions
+    if ("action" in item && item.action === "change_agent_state" as const) {
+      return false;
+    }
+
+    // Filter out null observations
+    if ("observation" in item && typeof item.observation === "string" && item.observation === "null") {
+      return false;
+    }
+
+    // Keep all other items
+    return true;
+  };
+
+  // Filter the trajectory items
+  const filteredTrajectoryItems = useMemo(() => {
+    return trajectoryItems.filter(shouldDisplayItem);
+  }, [trajectoryItems]);
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Settings */}
@@ -179,10 +238,10 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
         onSettingsChange={handleSettingsChange} 
       />
       
-      {/* Main content with sidebar and trajectory view */}
+      {/* Main content with sidebar, timeline, and metadata */}
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row gap-4 overflow-hidden">
         {/* Sidebar with entries list */}
-        <div className="flex-none lg:w-1/4 h-full max-h-full border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm overflow-hidden flex flex-col">
+        <div className="flex-none lg:w-1/5 h-full max-h-full border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm overflow-hidden flex flex-col">
           <div className="flex-none px-3 py-2 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-sm font-medium text-gray-900 dark:text-white">
               Evaluation Instances ({entries.length})
@@ -211,12 +270,13 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
           </div>
         </div>
 
-        {/* Trajectory View */}
-        <div className="flex-grow h-full lg:w-3/4 overflow-hidden">
+        {/* Timeline with trajectory components - full height with scrollable content */}
+        <div className="flex-grow h-full lg:w-3/5 overflow-hidden">
           <div className="h-full flex flex-col border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
+            {/* Timeline Header - fixed */}
             <div className="flex-none h-10 px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
               <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                Trajectory View
+                Trajectory ({filteredTrajectoryItems.length} steps)
               </h3>
               <div className="text-xs text-gray-500 dark:text-gray-400">
                 {entries[currentEntryIndex] && (
@@ -227,9 +287,51 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
               </div>
             </div>
             
-            <div className="flex-1 min-h-0 overflow-y-auto">
-              {trajectoryItems.length > 0 ? (
-                <TrajectoryList trajectory={trajectoryItems} />
+            {/* Timeline Content - scrollable */}
+            <div className="flex-1 min-h-0 overflow-y-auto scrollbar scrollbar-w-1.5 scrollbar-thumb-gray-200/75 dark:scrollbar-thumb-gray-700/75 scrollbar-track-transparent hover:scrollbar-thumb-gray-300/75 dark:hover:scrollbar-thumb-gray-600/75 scrollbar-thumb-rounded p-4">
+              {filteredTrajectoryItems.length > 0 ? (
+                <div className="flex flex-col items-center gap-4">
+                  {filteredTrajectoryItems.map((item, index) => {
+                    if (isAgentStateChange(item)) {
+                      return <AgentStateChangeComponent key={index} state={item} />;
+                    } else if (isUserMessage(item)) {
+                      return <UserMessageComponent key={index} message={item} />;
+                    } else if (isAssistantMessage(item)) {
+                      return <AssistantMessageComponent key={index} message={item} />;
+                    } else if (isCommandAction(item)) {
+                      return <CommandActionComponent key={index} command={item} />;
+                    } else if (isCommandObservation(item)) {
+                      return <CommandObservationComponent key={index} observation={item} />;
+                    } else if (isIPythonAction(item)) {
+                      return <IPythonActionComponent key={index} action={item} />;
+                    } else if (isIPythonObservation(item)) {
+                      return <IPythonObservationComponent key={index} observation={item} />;
+                    } else if (isFinishAction(item)) {
+                      return <FinishActionComponent key={index} action={item} />;
+                    } else if (isErrorObservation(item)) {
+                      return <ErrorObservationComponent key={index} observation={item} />;
+                    } else if (isReadAction(item)) {
+                      return <ReadActionComponent key={index} item={item} />;
+                    } else if (isReadObservation(item)) {
+                      return <ReadObservationComponent key={index} observation={item} />;
+                    } else if (isEditAction(item)) {
+                      return <EditActionComponent key={index} item={item} />;
+                    } else if (isEditObservation(item)) {
+                      return <EditObservationComponent key={index} observation={item} />;
+                    } else {
+                      return (
+                        <TrajectoryCard key={index}>
+                          <CSyntaxHighlighter
+                            language="json"
+                            key={index}
+                          >
+                            {JSON.stringify(item, null, 2)}
+                          </CSyntaxHighlighter>
+                        </TrajectoryCard>
+                      );
+                    }
+                  })}
+                </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center text-gray-500 dark:text-gray-400">
@@ -239,6 +341,22 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* JSON Visualizer - fixed height, no scroll */}
+        <div className="flex-none lg:w-1/5 h-full max-h-full border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm overflow-hidden flex flex-col">
+          <div className="flex-none px-3 py-2 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white">Entry Metadata</h3>
+          </div>
+          <div className="flex-1 overflow-y-auto scrollbar scrollbar-w-1.5 scrollbar-thumb-gray-200/75 dark:scrollbar-thumb-gray-700/75 scrollbar-track-transparent hover:scrollbar-thumb-gray-300/75 dark:hover:scrollbar-thumb-gray-600/75 scrollbar-thumb-rounded p-3">
+            {currentEntryWithoutHistory ? (
+              <JsonVisualizer data={currentEntryWithoutHistory} initialExpanded={true} />
+            ) : (
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                No metadata available
+              </div>
+            )}
           </div>
         </div>
       </div>
