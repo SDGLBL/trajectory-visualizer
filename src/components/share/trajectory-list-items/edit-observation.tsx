@@ -9,8 +9,12 @@ interface EditObservationProps {
 }
 
 export const EditObservationComponent: React.FC<EditObservationProps> = ({ observation }) => {
-  const [showDiff, setShowDiff] = useState(true);
-  const [showRawOutput, setShowRawOutput] = useState(false);
+  // Check if changes are empty
+  const hasChanges = observation.extras.old_content && observation.extras.new_content && 
+                    observation.extras.old_content !== observation.extras.new_content;
+  
+  const [showDiff, setShowDiff] = useState(hasChanges);
+  const [showRawOutput, setShowRawOutput] = useState(!hasChanges);
   
   // Determine language based on file extension
   const getLanguage = (path: string) => {

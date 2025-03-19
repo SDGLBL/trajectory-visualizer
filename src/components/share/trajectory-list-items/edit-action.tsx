@@ -3,13 +3,19 @@ import { TrajectoryCard } from "../trajectory-card";
 import { EditAction } from '../../../types/share';
 import { CMarkdown } from '../../markdown';
 import { DiffViewer } from '../../diff-viewer';
+import { CSyntaxHighlighter } from "../../syntax-highlighter";
 
 interface EditActionProps {
   item: EditAction;
 }
 
 export const EditActionComponent: React.FC<EditActionProps> = ({ item }) => {
-  const [showDiff, setShowDiff] = useState(true);
+  // Check if changes are empty
+  const hasChanges = item.args.old_content && item.args.new_content && 
+                    item.args.old_content !== item.args.new_content;
+  
+  const [showDiff, setShowDiff] = useState(hasChanges);
+  const [showRawOutput, setShowRawOutput] = useState(!hasChanges);
   
   // Determine language based on file extension
   const getLanguage = (path: string) => {
@@ -55,6 +61,12 @@ export const EditActionComponent: React.FC<EditActionProps> = ({ item }) => {
             >
               {showDiff ? 'Hide Diff' : 'Show Diff'}
             </button>
+            <button 
+              onClick={() => setShowRawOutput(!showRawOutput)} 
+              className="text-xs px-2 py-1 rounded bg-orange-200 dark:bg-orange-700 text-orange-800 dark:text-orange-100 hover:bg-orange-300 dark:hover:bg-orange-600 transition-colors"
+            >
+              {showRawOutput ? 'Hide Raw Output' : 'Show Raw Output'}
+            </button>
           </div>
         </div>
       </TrajectoryCard.Header>
@@ -75,6 +87,17 @@ export const EditActionComponent: React.FC<EditActionProps> = ({ item }) => {
                 newStr={item.args.new_content || ''} 
                 language={language}
               />
+            </div>
+          </div>
+        )}
+        
+        {showRawOutput && (
+          <div className="mt-3">
+            <div className="text-xs font-medium mb-1">Raw Content:</div>
+            <div className="border border-gray-200 dark:border-gray-700 rounded overflow-hidden">
+              <CSyntaxHighlighter language={language}>
+                {item.args.new_content || ''}
+              </CSyntaxHighlighter>
             </div>
           </div>
         )}
