@@ -135,7 +135,9 @@ export interface FinishAction {
   action: "finish";
   args: {
     outputs: Record<string, unknown>;
-    thought: string;
+    thought?: string;
+    final_thought?: string;
+    task_completed?: string;
   };
 }
 

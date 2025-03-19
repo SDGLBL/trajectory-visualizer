@@ -17,11 +17,20 @@ export const FinishActionComponent: React.FC<FinishActionProps> = ({ action }) =
       <TrajectoryCard.Header className="bg-green-100 dark:bg-green-800/50 text-green-800 dark:text-green-100">Finish</TrajectoryCard.Header>
       <TrajectoryCard.Body>
         {action.args.thought && <CMarkdown>{action.args.thought}</CMarkdown>}
+        {action.args.final_thought && (
+          <>
+            <div className="text-xs font-medium mt-1 mb-0.5">Final Thought:</div>
+            <CMarkdown>{action.args.final_thought}</CMarkdown>
+          </>
+        )}
         {Object.keys(action.args.outputs).length > 0 && (
           <CSyntaxHighlighter language="json">
             {JSON.stringify(action.args.outputs, null, 2)}
           </CSyntaxHighlighter>
         )}
+        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Task completed: {action.args.task_completed || 'unknown'}
+        </div>
       </TrajectoryCard.Body>
     </TrajectoryCard>
   );

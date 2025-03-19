@@ -17,7 +17,7 @@ export const CommandObservationComponent: React.FC<CommandObservationProps> = ({
       <TrajectoryCard.Body>
         <CSyntaxHighlighter language="shell">{observation.content}</CSyntaxHighlighter>
         <div className="text-xs text-gray-500 dark:text-gray-400">
-          Exit code: {observation.extras.exit_code}
+          Exit code: {observation.extras?.metadata?.exit_code ?? observation.extras?.exit_code ?? 'N/A'}
         </div>
       </TrajectoryCard.Body>
     </TrajectoryCard>

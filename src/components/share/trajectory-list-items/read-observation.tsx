@@ -43,7 +43,7 @@ export const ReadObservationComponent: React.FC<ReadObservationProps> = ({ obser
       originalJson={observation}
     >
       <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">
-        File: {observation.extras.path}
+        File Read Observation: {observation.extras.path}
       </TrajectoryCard.Header>
       <TrajectoryCard.Body>
         <CSyntaxHighlighter language={language}>{observation.content}</CSyntaxHighlighter>
