@@ -86,7 +86,7 @@ export const TrajectoryList: React.FC<TrajectoryListProps> = ({ trajectory }) =>
             Timeline ({timelineEntries.length} steps)
           </h3>
         </div>
-        <div className="h-[calc(100%-2.5rem)] overflow-y-auto">
+        <div className="h-[calc(100%-2.5rem)]">
           <Timeline
             entries={timelineEntries}
             selectedIndex={selectedIndex}
@@ -102,11 +102,11 @@ export const TrajectoryList: React.FC<TrajectoryListProps> = ({ trajectory }) =>
       <div className="lg:w-2/3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm overflow-hidden">
         <div className="h-10 px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center">
           <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-            Details
+            Run Details
           </h3>
         </div>
         <div className="h-[calc(100%-2.5rem)] overflow-y-auto p-4">
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex flex-col gap-4">
             {filteredTrajectory.map((item, index) => {
               if (index !== selectedIndex) return null;
               
