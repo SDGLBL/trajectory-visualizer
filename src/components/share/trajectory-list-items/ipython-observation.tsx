@@ -1,0 +1,19 @@
+import React from 'react';
+import { CSyntaxHighlighter } from "../../syntax-highlighter";
+import { TrajectoryCard } from "../trajectory-card";
+import { IPythonObservation } from '../../../types/share';
+
+interface IPythonObservationProps {
+  observation: IPythonObservation;
+}
+
+export const IPythonObservationComponent: React.FC<IPythonObservationProps> = ({ observation }) => {
+  return (
+    <TrajectoryCard className="bg-gray-100 dark:bg-gray-800/50">
+      <TrajectoryCard.Header className="bg-gray-300 dark:bg-gray-700">IPython Output</TrajectoryCard.Header>
+      <TrajectoryCard.Body>
+        <CSyntaxHighlighter language="python">{observation.content}</CSyntaxHighlighter>
+      </TrajectoryCard.Body>
+    </TrajectoryCard>
+  );
+};
