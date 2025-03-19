@@ -57,5 +57,3 @@ Thumbs.db
 
 # Project specific
 output-*.jsonl
-public/sample.jsonl
-public/sample-trajectory.jsonl
