@@ -6,6 +6,7 @@ interface TrajectoryTempateProps {
   children: React.ReactNode;
   className?: React.HTMLAttributes<HTMLDivElement>["className"];
   originalJson?: any;
+  defaultCollapsed?: boolean;
 }
 
 interface TrajectoryCardType extends React.FC<TrajectoryTempateProps> {
@@ -13,8 +14,23 @@ interface TrajectoryCardType extends React.FC<TrajectoryTempateProps> {
   Body: React.FC<TrajectoryCardBodyProps>;
 }
 
-export const TrajectoryCard: TrajectoryCardType = ({ children, className, originalJson }) => {
+export const TrajectoryCard: TrajectoryCardType = ({ children, className, originalJson, defaultCollapsed = false }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
+  
+  // Extract header and body from children
+  let header: React.ReactNode = null;
+  let body: React.ReactNode = null;
+  
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      if (child.type === TrajectoryCardHeader) {
+        header = child;
+      } else if (child.type === TrajectoryCardBody) {
+        body = child;
+      }
+    }
+  });
 
   return (
     <section
@@ -23,7 +39,31 @@ export const TrajectoryCard: TrajectoryCardType = ({ children, className, origin
         className,
       )}
     >
-      {children}
+      {/* Render header with toggle button */}
+      {header && (
+        <div className="flex items-center justify-between">
+          <div className="flex-grow">{header}</div>
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="px-2 py-1 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            aria-label={isCollapsed ? "Expand" : "Collapse"}
+          >
+            {isCollapsed ? (
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            ) : (
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            )}
+          </button>
+        </div>
+      )}
+      
+      {/* Render body only if not collapsed */}
+      {!isCollapsed && body}
+      
       {originalJson && (
         <>
           <div className="flex justify-end px-2 py-1 border-t border-gray-200 dark:border-gray-700">
