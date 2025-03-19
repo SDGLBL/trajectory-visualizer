@@ -49,7 +49,7 @@ export const TrajectoryCard: TrajectoryCardType = ({ children, className, origin
 };
 
 interface TrajectoryCardHeaderProps {
-  children: string;
+  children: React.ReactNode;
   className?: React.HTMLAttributes<HTMLDivElement>["className"];
 }
 

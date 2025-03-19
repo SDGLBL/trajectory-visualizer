@@ -87,7 +87,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
         console.log('Processing entry with type:', entry.type);
         
         const timelineEntry: TimelineEntry = {
-          type: mapEntryTypeToTimelineType(entry.type),
+          type: mapEntryTypeToTimelineType(entry.type || ''),
           timestamp: entry.timestamp,
           title: entry.content ? entry.content.split('\n')[0] : '',
           content: entry.content,

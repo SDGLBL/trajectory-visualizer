@@ -62,8 +62,8 @@ export const TrajectoryList: React.FC<TrajectoryListProps> = ({ trajectory }) =>
   const filteredTrajectory = trajectory.filter(shouldDisplayItem);
   
   // Convert trajectory items to timeline entries
-  const timelineEntries: TimelineEntry[] = React.useMemo(() => {
-    return filteredTrajectory.map(item => trajectoryItemToTimelineEntry(item));
+  const timelineEntries = React.useMemo(() => {
+    return filteredTrajectory.map(item => trajectoryItemToTimelineEntry(item) as TimelineEntry);
   }, [filteredTrajectory]);
   
   const formatTimelineDate = (entry: TimelineEntry): string => {

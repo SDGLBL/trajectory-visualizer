@@ -1,5 +1,4 @@
 import React from 'react';
-import { CSyntaxHighlighter } from "../../syntax-highlighter";
 import { TrajectoryCard } from "../trajectory-card";
 import { EditAction } from '../../../types/share';
 import { CMarkdown } from '../../markdown';
