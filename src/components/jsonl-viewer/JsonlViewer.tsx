@@ -114,6 +114,18 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   const handleCommandClick = (command: string): void => {
     navigator.clipboard.writeText(command.replace(/^\$ /, ''));
   };
+  
+  const handleFileEditClick = (): void => {
+    // Get the current timeline entry
+    if (timelineEntries && timelineEntries.length > selectedStepIndex) {
+      const entry = timelineEntries[selectedStepIndex];
+      
+      // Show file changes in an alert for now
+      if (entry.path) {
+        alert(`File: ${entry.path}\n\nChanges are not available in this view. This would typically show a diff of the changes made to the file.`);
+      }
+    }
+  };
 
   // Get entry display name for the sidebar
   const getEntryDisplayName = (entry: JsonlEntry, index: number): string => {
@@ -248,7 +260,7 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
                 formatTimelineDate={formatTimelineDate}
                 onStepSelect={setSelectedStepIndex}
                 onCommandClick={handleCommandClick}
-                onFileEditClick={() => {}}
+                onFileEditClick={handleFileEditClick}
                 createdAt={new Date().toISOString()}
               />
             </div>

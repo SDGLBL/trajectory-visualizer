@@ -27,17 +27,41 @@ function getActorType(source: string | undefined): 'User' | 'Assistant' | 'Syste
   return 'Assistant';
 }
 
+function mapEntryTypeToTimelineType(type: string): TimelineEntry['type'] {
+  switch (type) {
+    case 'command':
+      return 'command';
+    case 'edit':
+      return 'edit';
+    case 'search':
+      return 'search';
+    case 'error':
+      return 'error';
+    case 'message':
+    case 'thought':
+    default:
+      return 'message';
+  }
+}
+
 interface HistoryEntry {
   id: number;
   timestamp: string;
-  source: string;
-  message: string;
-  action: string;
-  args: {
+  // Original OpenHands format
+  source?: string;
+  message?: string;
+  action?: string;
+  args?: {
     content?: string;
     path?: string;
     command?: string;
   };
+  // Sample format
+  type?: string;
+  content?: string;
+  actorType?: string;
+  command?: string;
+  path?: string;
 }
 
 interface HistoryFormat {
@@ -55,6 +79,28 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
   } else if ('history' in trajectory && Array.isArray(trajectory.history)) {
     // Convert history entries to timeline format
     return (trajectory as HistoryFormat).history.map(entry => {
+      // Handle the format in sample-trajectory.jsonl
+      if ('type' in entry && 'content' in entry && 'actorType' in entry) {
+        const timelineEntry: TimelineEntry = {
+          type: mapEntryTypeToTimelineType(entry.type),
+          timestamp: entry.timestamp,
+          title: entry.content ? entry.content.split('\n')[0] : '',
+          content: entry.content,
+          actorType: entry.actorType as 'User' | 'Assistant' | 'System',
+          command: entry.command || '',
+          path: entry.path || ''
+        };
+
+        // Handle thought type
+        if (entry.type === 'thought') {
+          timelineEntry.thought = entry.content;
+          timelineEntry.content = undefined;
+        }
+
+        return timelineEntry;
+      }
+      
+      // Handle the original OpenHands format
       const timelineEntry: TimelineEntry = {
         type: entry.action === 'read' ? 'search' : entry.action === 'message' ? 'message' : 'command',
         timestamp: entry.timestamp,

@@ -129,8 +129,17 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
   }, []);
 
   const handleFileEditClick = useCallback((): void => {
-    // Handle file edit click
-  }, []);
+    // Get the current timeline entry
+    const timelineEntries = getTimelineEntries();
+    if (timelineEntries && timelineEntries.length > selectedStepIndex) {
+      const entry = timelineEntries[selectedStepIndex];
+      
+      // Show file changes in an alert for now
+      if (entry.path) {
+        alert(`File: ${entry.path}\n\nChanges are not available in this view. This would typically show a diff of the changes made to the file.`);
+      }
+    }
+  }, [getTimelineEntries, selectedStepIndex]);
 
   const handleArtifactSelect = useCallback(async (artifact: Artifact) => {
     if (!artifact) return;

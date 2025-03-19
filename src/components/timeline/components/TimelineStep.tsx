@@ -90,13 +90,15 @@ export const TimelineStep: React.FC<TimelineStepProps> = memo(({
                   <code className="font-mono bg-gray-50/50 dark:bg-gray-800/50 px-1 rounded">
                     {entry.path}
                   </code>
-                  <button
-                    type="button"
-                    onClick={onFileEditClick}
-                    className="ml-auto text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                  >
-                    View Changes
-                  </button>
+                  {onFileEditClick && (
+                    <button
+                      type="button"
+                      onClick={() => onFileEditClick()}
+                      className="ml-auto text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    >
+                      View Changes
+                    </button>
+                  )}
                 </div>
               )}
             </div>
