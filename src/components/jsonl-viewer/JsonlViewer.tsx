@@ -3,7 +3,7 @@ import { TimelineEntry } from '../timeline/types';
 import { Timeline } from '../timeline/Timeline';
 import JsonVisualizer from '../json-visualizer/JsonVisualizer';
 import { JsonlEntry, parseJsonlFile, convertJsonlEntryToTimeline } from '../../utils/jsonl-parser';
-import JsonlViewerSettings, { JsonlViewerSettings } from './JsonlViewerSettings';
+import JsonlViewerSettings, { JsonlViewerSettings as JsonlViewerSettingsType } from './JsonlViewerSettings';
 import { getNestedValue, formatValueForDisplay } from '../../utils/object-utils';
 
 interface JsonlViewerProps {
@@ -16,7 +16,7 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   const [timelineEntries, setTimelineEntries] = useState<TimelineEntry[]>([]);
   const [selectedStepIndex, setSelectedStepIndex] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
-  const [settings, setSettings] = useState<JsonlViewerSettings>({
+  const [settings, setSettings] = useState<JsonlViewerSettingsType>({
     sortField: 'instance_id',
     sortDirection: 'asc',
     displayFields: ['metrics.accumulated_cost', 'test_result.report.resolved']
@@ -38,7 +38,7 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   }, [content]);
 
   // Sort entries based on settings
-  const sortAndSetEntries = (entriesToSort: JsonlEntry[], currentSettings: JsonlViewerSettings) => {
+  const sortAndSetEntries = (entriesToSort: JsonlEntry[], currentSettings: JsonlViewerSettingsType) => {
     if (entriesToSort.length === 0) {
       setError('No valid entries found in the JSONL file');
       return;
@@ -86,7 +86,7 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   };
 
   // Handle settings changes
-  const handleSettingsChange = (newSettings: JsonlViewerSettings) => {
+  const handleSettingsChange = (newSettings: JsonlViewerSettingsType) => {
     setSettings(newSettings);
     sortAndSetEntries(originalEntries, newSettings);
   };
