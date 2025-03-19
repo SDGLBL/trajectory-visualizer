@@ -9,8 +9,8 @@ interface CommandObservationProps {
 
 export const CommandObservationComponent: React.FC<CommandObservationProps> = ({ observation }) => {
   return (
-    <TrajectoryCard className="bg-gray-100 dark:bg-gray-800/50">
-      <TrajectoryCard.Header className="bg-gray-300 dark:bg-gray-700">Shell Output</TrajectoryCard.Header>
+    <TrajectoryCard className="bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700">
+      <TrajectoryCard.Header className="bg-gray-100 dark:bg-gray-700/50 text-gray-700 dark:text-gray-200">Shell Output</TrajectoryCard.Header>
       <TrajectoryCard.Body>
         <CSyntaxHighlighter language="shell">{observation.content}</CSyntaxHighlighter>
         <div className="text-xs text-gray-500 dark:text-gray-400">

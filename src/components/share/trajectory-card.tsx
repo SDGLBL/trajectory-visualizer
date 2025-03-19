@@ -15,7 +15,7 @@ export const TrajectoryCard: TrajectoryCardType = ({ children, className }) => {
   return (
     <section
       className={clsx(
-        "w-full max-w-[1000px] rounded-md",
+        "w-full max-w-[1000px] rounded-md shadow-sm",
         className,
       )}
     >
@@ -33,11 +33,11 @@ const TrajectoryCardHeader: React.FC<TrajectoryCardHeaderProps> = ({ children, c
   return (
     <div
       className={clsx(
-        "rounded-t-md p-2",
+        "rounded-t-md p-2 font-medium",
         className,
       )}
     >
-      <span className="font-semibold">{children}</span>
+      {children}
     </div>
   );
 }
@@ -48,7 +48,7 @@ interface TrajectoryCardBodyProps {
 
 const TrajectoryCardBody: React.FC<TrajectoryCardBodyProps> = ({ children }) => {
   return (
-    <div className="p-2 flex flex-col gap-4 overflow-auto">
+    <div className="p-3 flex flex-col gap-4 overflow-auto">
       {React.Children.map(children, (child, index) => {
         if (typeof child === "string") return <div key={index}>{child}</div>;
         return child;
