@@ -242,11 +242,17 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
 
   // Check if we're dealing with a JSONL file
   if (artifactContent?.content?.fileType === 'jsonl' && artifactContent?.content?.jsonlContent) {
+    console.log('Rendering JSONL viewer with content:', artifactContent.content.jsonlContent.substring(0, 100) + '...');
     return (
       <div className="flex flex-col h-full overflow-hidden">
         <JsonlViewer content={artifactContent.content.jsonlContent} />
       </div>
     );
+  }
+  
+  // Check if we're dealing with a trajectory file
+  if (artifactContent?.content?.fileType === 'trajectory' && artifactContent?.content?.trajectoryData) {
+    console.log('Rendering trajectory with data:', JSON.stringify(artifactContent.content.trajectoryData).substring(0, 100) + '...');
   }
 
   // Use our helper function to get the timeline entries

@@ -4,6 +4,7 @@ import JsonlViewerSettings, { JsonlViewerSettings as JsonlViewerSettingsType } f
 import { getNestedValue, formatValueForDisplay } from '../../utils/object-utils';
 import { TrajectoryItem } from '../../types/share';
 import JsonVisualizer from '../json-visualizer/JsonVisualizer';
+import { DEFAULT_JSONL_VIEWER_SETTINGS } from '../../config/jsonl-viewer-config';
 import {
   isAgentStateChange,
   isUserMessage,
@@ -50,13 +51,7 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
   const [currentEntryIndex, setCurrentEntryIndex] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
   const [trajectoryItems, setTrajectoryItems] = useState<TrajectoryItem[]>([]);
-  const [settings, setSettings] = useState<JsonlViewerSettingsType>(
-    () => {
-      // Import here to avoid circular dependencies
-      const { DEFAULT_JSONL_VIEWER_SETTINGS } = require('../../config/jsonl-viewer-config');
-      return DEFAULT_JSONL_VIEWER_SETTINGS;
-    }
-  );
+  const [settings, setSettings] = useState<JsonlViewerSettingsType>(DEFAULT_JSONL_VIEWER_SETTINGS);
   const [originalEntries, setOriginalEntries] = useState<JsonlEntry[]>([]);
 
   // Parse the JSONL file on component mount or when content changes
