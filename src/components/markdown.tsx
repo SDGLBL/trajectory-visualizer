@@ -4,6 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import type { Components } from 'react-markdown';
+// @ts-ignore - vscDarkPlus has a type mismatch with the expected style prop
 
 interface MarkdownProps {
   children: string;
@@ -16,6 +17,7 @@ export const CMarkdown: React.FC<MarkdownProps> = ({ children }) => {
       const isInline = !match;
       return !isInline ? (
         <SyntaxHighlighter
+          // @ts-ignore - vscDarkPlus has a type mismatch with the expected style prop
           style={vscDarkPlus}
           language={match ? match[1] : ''}
           PreTag="div"
