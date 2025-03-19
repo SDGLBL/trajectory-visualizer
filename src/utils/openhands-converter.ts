@@ -1,50 +1,16 @@
 import { TimelineEntry } from '../components/timeline/types';
+import { 
+  TrajectoryHistoryEntry, 
+  TrajectoryData, 
+  getActorType, 
+  mapEntryTypeToTimelineType 
+} from '../types/trajectory';
 
-// Re-export the TimelineEntry type to ensure we're using the same type
-interface OpenHandsTimelineEntry extends TimelineEntry {}
+// For backward compatibility
+type OpenHandsEvent = TrajectoryHistoryEntry;
+type HistoryFormat = TrajectoryData;
 
-interface OpenHandsEvent {
-  id?: number;
-  timestamp?: string;
-  source?: string;
-  message?: string;
-  cause?: string;
-  action?: string;
-  observation?: string;
-  tool_call_metadata?: {
-    tool_name: string;
-    tool_args: Record<string, any>;
-  };
-  args?: Record<string, any>;
-  content?: string;
-  extras?: Record<string, any>;
-  success?: boolean;
-}
-
-function getActorType(source: string | undefined): 'User' | 'Assistant' | 'System' {
-  if (source === 'user') return 'User';
-  if (source === 'system' || source === 'environment') return 'System';
-  return 'Assistant';
-}
-
-interface HistoryEntry {
-  id: number;
-  timestamp: string;
-  source: string;
-  message: string;
-  action: string;
-  args: {
-    content?: string;
-    path?: string;
-    command?: string;
-  };
-}
-
-interface HistoryFormat {
-  history: HistoryEntry[];
-}
-
-export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] } | { test_result: { git_patch: string } } | HistoryFormat): OpenHandsTimelineEntry[] {
+export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entries: OpenHandsEvent[] } | { test_result: { git_patch: string } } | HistoryFormat): TimelineEntry[] {
   // Handle different formats
   let events: OpenHandsEvent[];
   
@@ -55,9 +21,31 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
   } else if ('history' in trajectory && Array.isArray(trajectory.history)) {
     // Convert history entries to timeline format
     return (trajectory as HistoryFormat).history.map(entry => {
+      // Handle the format in sample-trajectory.jsonl
+      if ('type' in entry && 'content' in entry && 'actorType' in entry) {
+        const timelineEntry: TimelineEntry = {
+          type: mapEntryTypeToTimelineType(entry.type || ''),
+          timestamp: entry.timestamp || new Date().toISOString(),
+          title: entry.content ? entry.content.split('\n')[0] : '',
+          content: entry.content,
+          actorType: entry.actorType as 'User' | 'Assistant' | 'System',
+          command: entry.command || '',
+          path: entry.path || ''
+        };
+
+        // Handle thought type
+        if (entry.type === 'thought') {
+          timelineEntry.thought = entry.content;
+          timelineEntry.content = undefined;
+        }
+
+        return timelineEntry;
+      }
+      
+      // Handle the original OpenHands format
       const timelineEntry: TimelineEntry = {
         type: entry.action === 'read' ? 'search' : entry.action === 'message' ? 'message' : 'command',
-        timestamp: entry.timestamp,
+        timestamp: entry.timestamp || new Date().toISOString(),
         title: entry.message,
         content: entry.args?.content || entry.message,
         actorType: entry.source === 'user' ? 'User' : entry.source === 'agent' ? 'Assistant' : 'System',
@@ -117,7 +105,7 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
     throw new Error('Invalid trajectory format. Events must be an array.');
   }
   // First entry is always a message showing the start
-  const entries: OpenHandsTimelineEntry[] = [{
+  const entries: TimelineEntry[] = [{
     type: 'message',
     timestamp: new Date().toISOString(),
     title: 'Starting trajectory visualization',

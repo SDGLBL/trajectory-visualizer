@@ -13,7 +13,7 @@ export interface TimelineEntry {
   };
 }
 
-export type StepColor = 'blue' | 'green' | 'yellow' | 'red' | 'gray' | 'purple' | 'indigo';
+export type StepColor = 'blue' | 'green' | 'yellow' | 'red' | 'gray' | 'purple' | 'indigo' | 'amber' | 'emerald' | 'teal' | 'cyan' | 'pink' | 'rose';
 
 export interface StepInfo {
   stepTitle: string;

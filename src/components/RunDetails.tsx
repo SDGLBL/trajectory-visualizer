@@ -7,6 +7,7 @@ import { TimelineEntry } from './timeline/types';
 import ArtifactDetails from './artifacts/ArtifactDetails';
 import RunHeader from './header/RunHeader';
 import { convertOpenHandsTrajectory } from '../utils/openhands-converter';
+import JsonlViewer from '../components/jsonl-viewer/JsonlViewer';
 
 interface RunDetailsProps {
   owner: string;
@@ -75,6 +76,11 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
         return;
       }
 
+      // Skip if we're viewing a JSONL file
+      if (artifactContent?.content?.fileType === 'jsonl') {
+        return;
+      }
+
       // Get the timeline entries using our helper
       const timelineEntries = getTimelineEntries();
       const maxSteps = timelineEntries.length - 1;
@@ -116,15 +122,24 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
     
     // Cleanup
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [getTimelineEntries, selectedStepIndex]);
+  }, [getTimelineEntries, selectedStepIndex, artifactContent]);
 
   const handleCommandClick = useCallback((command: string): void => {
     navigator.clipboard.writeText(command.replace(/^\$ /, ''));
   }, []);
 
   const handleFileEditClick = useCallback((): void => {
-    // Handle file edit click
-  }, []);
+    // Get the current timeline entry
+    const timelineEntries = getTimelineEntries();
+    if (timelineEntries && timelineEntries.length > selectedStepIndex) {
+      const entry = timelineEntries[selectedStepIndex];
+      
+      // Show file changes in an alert for now
+      if (entry.path) {
+        alert(`File: ${entry.path}\n\nChanges are not available in this view. This would typically show a diff of the changes made to the file.`);
+      }
+    }
+  }, [getTimelineEntries, selectedStepIndex]);
 
   const handleArtifactSelect = useCallback(async (artifact: Artifact) => {
     if (!artifact) return;
@@ -223,6 +238,21 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
         <p className="text-red-500 dark:text-red-400">{error || 'Failed to load run details'}</p>
       </div>
     );
+  }
+
+  // Check if we're dealing with a JSONL file
+  if (artifactContent?.content?.fileType === 'jsonl' && artifactContent?.content?.jsonlContent) {
+    console.log('Rendering JSONL viewer with content:', artifactContent.content.jsonlContent.substring(0, 100) + '...');
+    return (
+      <div className="flex flex-col h-full overflow-hidden">
+        <JsonlViewer content={artifactContent.content.jsonlContent} />
+      </div>
+    );
+  }
+  
+  // Check if we're dealing with a trajectory file
+  if (artifactContent?.content?.fileType === 'trajectory' && artifactContent?.content?.trajectoryData) {
+    console.log('Rendering trajectory with data:', JSON.stringify(artifactContent.content.trajectoryData).substring(0, 100) + '...');
   }
 
   // Use our helper function to get the timeline entries
