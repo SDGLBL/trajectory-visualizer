@@ -132,9 +132,16 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
             const value = getNestedValue(entry, field, null);
             const displayValue = formatValueForDisplay(value);
             
+            // Format the field name for display
+            let displayField = field;
+            if (field.startsWith('len(') && field.endsWith(')')) {
+              const innerField = field.substring(4, field.length - 1);
+              displayField = `${innerField} length`;
+            }
+            
             return (
               <div key={idx} className="flex items-center justify-between">
-                <span className="text-xs text-gray-500 dark:text-gray-400">{field}:</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">{displayField}:</span>
                 <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{displayValue}</span>
               </div>
             );

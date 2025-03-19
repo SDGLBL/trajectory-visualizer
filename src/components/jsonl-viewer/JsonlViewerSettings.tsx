@@ -11,6 +11,25 @@ export interface JsonlViewerSettings {
   displayFields: string[];
 }
 
+// Common sort fields with descriptions
+const COMMON_SORT_FIELDS = [
+  { value: 'instance_id', label: 'Instance ID' },
+  { value: 'metrics.accumulated_cost', label: 'Cost (metrics.accumulated_cost)' },
+  { value: 'metrics.execution_time', label: 'Execution Time (metrics.execution_time)' },
+  { value: 'test_result.report.resolved', label: 'Resolved Status (test_result.report.resolved)' },
+  { value: 'test_result.report.score', label: 'Score (test_result.report.score)' },
+  { value: 'len(history)', label: 'History Length (len(history))' }
+];
+
+// Common display fields
+const COMMON_DISPLAY_FIELDS = [
+  'metrics.accumulated_cost',
+  'metrics.execution_time',
+  'test_result.report.resolved',
+  'test_result.report.score',
+  'len(history)'
+];
+
 const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({ 
   onSettingsChange, 
   settings 
@@ -20,6 +39,7 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>(settings.sortDirection);
   const [displayFields, setDisplayFields] = useState<string[]>(settings.displayFields);
   const [newField, setNewField] = useState('');
+  const [customSortField, setCustomSortField] = useState('');
 
   const handleSave = () => {
     onSettingsChange({
@@ -44,6 +64,28 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleAddField();
+    }
+  };
+
+  const handleSortFieldChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === 'custom') {
+      // Don't change the sort field yet, wait for custom input
+      setCustomSortField(sortField);
+    } else {
+      setSortField(value);
+      setCustomSortField('');
+    }
+  };
+
+  const handleCustomSortFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomSortField(e.target.value);
+    setSortField(e.target.value);
+  };
+
+  const handleAddCommonDisplayField = (field: string) => {
+    if (!displayFields.includes(field)) {
+      setDisplayFields([...displayFields, field]);
     }
   };
 
@@ -75,20 +117,44 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
             {/* Sort Settings */}
             <div>
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort Entries</h3>
-              <div className="flex gap-2">
-                <div className="flex-1">
+              <div className="flex flex-col gap-2">
+                <div>
                   <label htmlFor="sort-field" className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                    Field (dot notation)
+                    Sort Field
                   </label>
-                  <input
+                  <select
                     id="sort-field"
-                    type="text"
-                    value={sortField}
-                    onChange={(e) => setSortField(e.target.value)}
-                    placeholder="e.g., metrics.accumulated_cost"
+                    value={COMMON_SORT_FIELDS.some(f => f.value === sortField) ? sortField : 'custom'}
+                    onChange={handleSortFieldChange}
                     className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
+                  >
+                    {COMMON_SORT_FIELDS.map(field => (
+                      <option key={field.value} value={field.value}>{field.label}</option>
+                    ))}
+                    <option value="custom">Custom Field...</option>
+                  </select>
                 </div>
+                
+                {/* Custom sort field input */}
+                {!COMMON_SORT_FIELDS.some(f => f.value === sortField) && (
+                  <div>
+                    <label htmlFor="custom-sort-field" className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                      Custom Field (dot notation or len())
+                    </label>
+                    <input
+                      id="custom-sort-field"
+                      type="text"
+                      value={customSortField}
+                      onChange={handleCustomSortFieldChange}
+                      placeholder="e.g., metrics.accumulated_cost or len(history)"
+                      className="w-full px-2 py-1 text-sm border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Tip: Use len(field) to sort by array length, e.g., len(history)
+                    </p>
+                  </div>
+                )}
+                
                 <div>
                   <label htmlFor="sort-direction" className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Direction
@@ -109,6 +175,29 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
             {/* Display Fields */}
             <div>
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Display Fields</h3>
+              
+              {/* Common display fields */}
+              <div className="mb-3">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Common Fields:</p>
+                <div className="flex flex-wrap gap-2">
+                  {COMMON_DISPLAY_FIELDS.map(field => (
+                    <button
+                      key={field}
+                      onClick={() => handleAddCommonDisplayField(field)}
+                      disabled={displayFields.includes(field)}
+                      className={`px-2 py-1 text-xs rounded-md ${
+                        displayFields.includes(field)
+                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                          : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/30'
+                      }`}
+                    >
+                      {field}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Custom display field input */}
               <div className="flex gap-2 mb-2">
                 <input
                   type="text"
@@ -126,6 +215,7 @@ const JsonlViewerSettings: React.FC<JsonlViewerSettingsProps> = ({
                 </button>
               </div>
               
+              {/* Display fields list */}
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {displayFields.length === 0 ? (
                   <p className="text-xs text-gray-500 dark:text-gray-400 italic">
