@@ -1,4 +1,5 @@
 import { TimelineEntry } from '../types';
+import { describe, test, expect } from 'vitest';
 
 describe('Timeline Types', () => {
   test('TimelineEntry type supports screenshot in metadata', () => {

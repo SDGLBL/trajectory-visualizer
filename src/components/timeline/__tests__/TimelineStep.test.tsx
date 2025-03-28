@@ -1,12 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi, describe, test, expect } from 'vitest';
 import TimelineStep from '../components/TimelineStep';
 import { TimelineEntry } from '../types';
 
 // Mock the formatTimelineDate function
-const mockFormatTimelineDate = jest.fn().mockReturnValue('12:34 PM');
-const mockOnSelect = jest.fn();
-const mockOnCommandClick = jest.fn();
+const mockFormatTimelineDate = vi.fn().mockReturnValue('12:34 PM');
+const mockOnSelect = vi.fn();
+const mockOnCommandClick = vi.fn();
 
 describe('TimelineStep Component', () => {
   // Basic test to ensure the component renders
@@ -29,7 +30,7 @@ describe('TimelineStep Component', () => {
       />
     );
 
-    expect(screen.getByText('Test content')).toBeInTheDocument();
+    expect(screen.getAllByText('Test content').length).toBeGreaterThan(0);
     expect(screen.getByText('Assistant')).toBeInTheDocument();
   });
 

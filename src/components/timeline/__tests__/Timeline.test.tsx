@@ -1,30 +1,28 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi, describe, test, expect, beforeEach } from 'vitest';
 import { Timeline } from '../Timeline';
 import { TimelineEntry } from '../types';
 
 // Mock the TimelineStep component
-jest.mock('../components/TimelineStep', () => {
-  return {
-    __esModule: true,
-    default: ({ entry, index, isSelected, onSelect }: any) => (
-      <div 
-        data-testid={`timeline-step-${index}`}
-        data-selected={isSelected}
-        onClick={() => onSelect(index)}
-      >
-        <span>{entry.type}</span>
-        {entry.content && <span>{entry.content}</span>}
-        {entry.command && <span>{entry.command}</span>}
-      </div>
-    )
-  };
-});
+vi.mock('../components/TimelineStep', () => ({
+  default: ({ entry, index, isSelected, onSelect }: any) => (
+    <div 
+      data-testid={`timeline-step-${index}`}
+      data-selected={isSelected.toString()}
+      onClick={() => onSelect(index)}
+    >
+      <span>{entry.type}</span>
+      {entry.content && <span>{entry.content}</span>}
+      {entry.command && <span>{entry.command}</span>}
+    </div>
+  )
+}));
 
 describe('Timeline Component', () => {
-  const mockOnStepSelect = jest.fn();
-  const mockOnCommandClick = jest.fn();
-  const mockFormatTimelineDate = jest.fn().mockReturnValue('12:34 PM');
+  const mockOnStepSelect = vi.fn();
+  const mockOnCommandClick = vi.fn();
+  const mockFormatTimelineDate = vi.fn().mockReturnValue('12:34 PM');
 
   // Basic test to ensure the component renders
   test('renders without crashing', () => {
