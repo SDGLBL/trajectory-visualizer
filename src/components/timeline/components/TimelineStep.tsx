@@ -93,6 +93,17 @@ export const TimelineStep: React.FC<TimelineStepProps> = memo(({
                 </div>
               )}
               
+              {/* Screenshot */}
+              {entry.metadata?.screenshot && (
+                <div className="mt-2">
+                  <img
+                    src={entry.metadata.screenshot}
+                    alt="Screenshot"
+                    className="max-w-full rounded-md shadow-sm ring-1 ring-black/5 dark:ring-white/5"
+                  />
+                </div>
+              )}
+              
               {/* File path for edits */}
               {entry.path && (
                 <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
