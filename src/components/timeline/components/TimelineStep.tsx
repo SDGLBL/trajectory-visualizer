@@ -56,7 +56,7 @@ export const TimelineStep: React.FC<TimelineStepProps> = memo(({
                 <span className={`inline-flex items-center h-[18px] px-1.5 rounded-md text-[10px] font-medium ${colorClasses[stepColor]} shadow-sm ring-1 ring-black/5 dark:ring-white/5`}>
                   {actorType}
                 </span>
-                <h4 className="text-xs font-medium text-gray-900 dark:text-white truncate max-w-[180px]">
+                <h4 className="text-xs font-medium text-gray-900 dark:text-white">
                   {stepTitle}
                 </h4>
                 <time className="text-[10px] tabular-nums text-gray-400 dark:text-gray-500 font-medium">
@@ -74,21 +74,21 @@ export const TimelineStep: React.FC<TimelineStepProps> = memo(({
             <div className="space-y-1 mt-1.5">
               {/* Thought content */}
               {entry.thought && (
-                <div className="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-900/20 rounded px-2 py-1 line-clamp-1 overflow-hidden">
+                <div className="text-xs text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-900/20 rounded px-2 py-1 overflow-hidden">
                   <MarkdownContent content={entry.thought} />
                 </div>
               )}
               
               {/* Regular content */}
               {entry.content && (
-                <div className="text-xs text-gray-600 dark:text-gray-300 line-clamp-1 overflow-hidden">
+                <div className="text-xs text-gray-600 dark:text-gray-300 overflow-hidden">
                   <MarkdownContent content={entry.content} />
                 </div>
               )}
               
               {/* Command content */}
               {entry.command && (
-                <div className="line-clamp-1 overflow-hidden">
+                <div className="overflow-hidden">
                   <CommandBlock command={entry.command} onCopy={onCommandClick} />
                 </div>
               )}
