@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi, describe, test, expect } from 'vitest';
 import { Timeline } from '../components/timeline/Timeline';
-import { TimelineEntry } from '../components/timeline/types';
 import { convertOpenHandsTrajectory } from '../utils/openhands-converter';
 
 describe('Simple Screenshot Test', () => {
