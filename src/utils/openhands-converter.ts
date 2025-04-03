@@ -151,6 +151,14 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
           ...event.tool_call_metadata.tool_args
         };
       }
+      
+      // Add screenshot if available in extras.metadata
+      if (event.extras?.metadata?.screenshot) {
+        entry.metadata = {
+          ...entry.metadata,
+          screenshot: event.extras.metadata.screenshot
+        };
+      }
 
       entries.push(entry as TimelineEntry);
     } else if (event.observation) {
@@ -160,11 +168,26 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
         timestamp: event.timestamp || new Date().toISOString(),
         title: event.message || event.observation,
         content: event.content || '',
-        metadata: event.extras || {},
+        metadata: {},
         actorType: getActorType(event.source),
         command: '',
         path: ''
       };
+      
+      // Add extras as metadata
+      if (event.extras) {
+        entry.metadata = {
+          ...event.extras
+        };
+        
+        // If extras.metadata exists, merge it with the entry metadata
+        if (event.extras.metadata) {
+          entry.metadata = {
+            ...entry.metadata,
+            ...event.extras.metadata
+          };
+        }
+      }
 
       entries.push(entry as TimelineEntry);
     }

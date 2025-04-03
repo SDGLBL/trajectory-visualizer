@@ -9,6 +9,7 @@ export interface TimelineEntry {
   actorType?: 'User' | 'Assistant' | 'System';
   metadata?: {
     cost?: number;
+    screenshot?: string; // Base64 encoded image data or image URL
     [key: string]: any;
   };
 }
