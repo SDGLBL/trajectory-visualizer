@@ -52,6 +52,10 @@ const RunDetails: React.FC<RunDetailsProps> = ({ owner, repo, run, initialConten
       if (artifactContent?.content?.trajectory) {
         return convertOpenHandsTrajectory(artifactContent.content.trajectory);
       }
+      // Check if this is an uploaded trajectory file
+      if (artifactContent?.content?.fileType === 'trajectory' && artifactContent?.content?.trajectoryData) {
+        return convertOpenHandsTrajectory(artifactContent.content.trajectoryData);
+      }
       return artifactContent?.content?.history || artifactContent?.content?.jsonlHistory || [];
     } catch (error) {
       console.error('Failed to convert trajectory:', error);

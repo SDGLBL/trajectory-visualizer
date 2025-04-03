@@ -116,8 +116,8 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
   } as TimelineEntry];
 
   for (const event of events) {
-    // Skip environment state changes
-    if (event.source === 'environment' && event.observation === 'agent_state_changed') {
+    // Skip environment state changes that don't have a message
+    if (event.source === 'environment' && event.observation === 'agent_state_changed' && !event.message) {
       continue;
     }
 
@@ -161,12 +161,12 @@ export function convertOpenHandsTrajectory(trajectory: OpenHandsEvent[] | { entr
       }
 
       entries.push(entry as TimelineEntry);
-    } else if (event.observation) {
-      // This is an observation event
+    } else if (event.observation || event.message) {
+      // This is an observation event or a message-only event
       const entry = {
-        type: event.observation === 'user_message' || event.observation === 'assistant_message' ? 'message' : getObservationType(event.observation, event.success),
+        type: event.observation === 'user_message' || event.observation === 'assistant_message' ? 'message' : getObservationType(event.observation || 'message', event.success),
         timestamp: event.timestamp || new Date().toISOString(),
-        title: event.message || event.observation,
+        title: event.message || event.observation || 'No title',
         content: event.content || '',
         metadata: {},
         actorType: getActorType(event.source),
