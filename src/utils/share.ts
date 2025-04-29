@@ -15,7 +15,9 @@ import {
   EditAction, 
   EditObservation,
   ThinkAction,
-  ThinkObservation
+  ThinkObservation,
+  QueryCodeIndexAction,
+  QueryCodeIndexObservation
 } from '../types/share';
 
 export const isConfig = (data: TrajectoryItem): data is Config =>
@@ -68,6 +70,12 @@ export const isThinkAction = (data: TrajectoryItem): data is ThinkAction =>
 
 export const isThinkObservation = (data: TrajectoryItem): data is ThinkObservation =>
   "observation" in data && data.observation === "think" && "source" in data && data.source === "agent";
+
+export const isQueryCodeIndexAction = (data: TrajectoryItem): data is QueryCodeIndexAction =>
+  "action" in data && data.action === "query_code_index" && "source" in data && data.source === "agent";
+
+export const isQueryCodeIndexObservation = (data: TrajectoryItem): data is QueryCodeIndexObservation =>
+  "observation" in data && data.observation === "query_code_index" && "source" in data && data.source === "agent";
 
 // Convert a trajectory item to a timeline entry
 export const trajectoryItemToTimelineEntry = (item: TrajectoryItem) => {
@@ -186,6 +194,33 @@ export const trajectoryItemToTimelineEntry = (item: TrajectoryItem) => {
       timestamp: item.timestamp,
       content: item.args.thought,
       actorType: 'Assistant',
+    };
+  }
+  
+  if (isQueryCodeIndexAction(item)) {
+    return {
+      type: 'search',
+      timestamp: item.timestamp,
+      command: `${item.args.method} ${JSON.stringify(item.args.params, null, 2)}`,
+      metadata: {
+        method: item.args.method,
+        params: item.args.params,
+        tool_call_metadata: item.tool_call_metadata,
+      },
+      actorType: 'Assistant',
+    };
+  }
+  
+  if (isQueryCodeIndexObservation(item)) {
+    return {
+      type: 'search',
+      timestamp: item.timestamp,
+      content: item.content,
+      metadata: {
+        success: item.success,
+        tool_call_metadata: item.tool_call_metadata,
+      },
+      actorType: 'System',
     };
   }
   

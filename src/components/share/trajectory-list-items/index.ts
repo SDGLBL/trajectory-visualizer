@@ -13,3 +13,5 @@ export * from "./user-message";
 export * from "./error-observation";
 export * from "./think-action";
 export * from "./think-observation";
+export * from "./query-code-index-action";
+export * from "./query-code-index-observation";

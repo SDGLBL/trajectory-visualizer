@@ -14,6 +14,9 @@ export interface TrajectoryHistoryEntry {
     path?: string;
     command?: string;
     thought?: string;
+    method?: string; // For query_code_index and similar actions
+    params?: Record<string, any>; // For parameterized actions
+    [key: string]: any; // Allow any other args for extensibility
   };
   // Sample format
   type?: string;
@@ -33,9 +36,20 @@ export interface TrajectoryHistoryEntry {
     total_calls_in_response?: number;
     [key: string]: any;
   };
+  // LLM metrics for advanced analytics
+  llm_metrics?: {
+    accumulated_cost?: number;
+    accumulated_token_usage?: Record<string, any>;
+    costs?: any[];
+    response_latencies?: any[];
+    token_usages?: any[];
+    [key: string]: any;
+  };
   // For backward compatibility
   cause?: string | number;
   success?: boolean;
+  // Allow extension for future actions without breaking changes
+  [key: string]: any;
 }
 
 export interface TrajectoryData {
@@ -57,6 +71,7 @@ export function mapEntryTypeToTimelineType(type: string): TimelineEntry['type'] 
     case 'edit':
       return 'edit';
     case 'search':
+    case 'query_code_index':
       return 'search';
     case 'error':
       return 'error';
@@ -65,7 +80,20 @@ export function mapEntryTypeToTimelineType(type: string): TimelineEntry['type'] 
     case 'thought':
       return 'message'; // Thoughts are displayed as messages with special styling
     default:
-      // Fallback to message type for unknown types
+      // Try to infer the type from the name for unknown actions
+      if (type.includes('read') || type.includes('search') || type.includes('query')) {
+        return 'search';
+      }
+      if (type.includes('edit') || type.includes('write') || type.includes('update')) {
+        return 'edit';
+      }
+      if (type.includes('run') || type.includes('execute') || type.includes('command')) {
+        return 'command';
+      }
+      if (type.includes('error') || type.includes('fail')) {
+        return 'error';
+      }
+      // Fallback to message type for truly unknown types
       return 'message';
   }
 }

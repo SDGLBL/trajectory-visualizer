@@ -230,4 +230,31 @@ export interface ThinkObservation {
   tool_call_metadata?: Record<string, any>;
 }
 
-export type TrajectoryItem = AgentStateChange | UserMessage | AssistantMessage | CommandAction | CommandObservation | IPythonAction | IPythonObservation | FinishAction | Config | ErrorObservation | NullObservation | ReadAction | ReadObservation | EditAction | EditObservation | ThinkAction | ThinkObservation;
+export interface QueryCodeIndexAction {
+  id: number;
+  action: "query_code_index";
+  message: string;
+  source: "agent";
+  timestamp: string;
+  args: {
+    method: string;
+    params: Record<string, any>;
+  };
+  tool_call_metadata?: Record<string, any>;
+  llm_metrics?: Record<string, any>;
+}
+
+export interface QueryCodeIndexObservation {
+  id: number;
+  cause: number;
+  observation: "query_code_index";
+  message: string;
+  content: string;
+  source: "agent";
+  timestamp: string;
+  extras: Record<string, unknown>;
+  tool_call_metadata?: Record<string, any>;
+  success?: boolean;
+}
+
+export type TrajectoryItem = AgentStateChange | UserMessage | AssistantMessage | CommandAction | CommandObservation | IPythonAction | IPythonObservation | FinishAction | Config | ErrorObservation | NullObservation | ReadAction | ReadObservation | EditAction | EditObservation | ThinkAction | ThinkObservation | QueryCodeIndexAction | QueryCodeIndexObservation;

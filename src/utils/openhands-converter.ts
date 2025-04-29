@@ -204,8 +204,19 @@ function getActionType(action: string): TimelineEntry['type'] {
       return 'edit';
     case 'web_read':
     case 'browser':
+    case 'query_code_index':
       return 'search';
     default:
+      // For unknown actions, check if the action name gives us a hint
+      if (action.includes('read') || action.includes('search') || action.includes('query')) {
+        return 'search';
+      }
+      if (action.includes('edit') || action.includes('write') || action.includes('update')) {
+        return 'edit';
+      }
+      if (action.includes('run') || action.includes('execute')) {
+        return 'command';
+      }
       return 'message';
   }
 }

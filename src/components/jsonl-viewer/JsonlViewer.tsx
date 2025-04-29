@@ -20,7 +20,9 @@ import {
   isEditAction,
   isEditObservation,
   isThinkAction,
-  isThinkObservation
+  isThinkObservation,
+  isQueryCodeIndexAction,
+  isQueryCodeIndexObservation
 } from "../../utils/share";
 import {
   AgentStateChangeComponent,
@@ -37,7 +39,9 @@ import {
   EditObservationComponent,
   ErrorObservationComponent,
   ThinkActionComponent,
-  ThinkObservationComponent
+  ThinkObservationComponent,
+  QueryCodeIndexActionComponent,
+  QueryCodeIndexObservationComponent
 } from "../share/trajectory-list-items";
 import { CSyntaxHighlighter } from "../syntax-highlighter";
 import { TrajectoryCard } from "../share/trajectory-card";
@@ -323,6 +327,10 @@ const JsonlViewer: React.FC<JsonlViewerProps> = ({ content }) => {
                       return <ThinkActionComponent key={index} action={item} />;
                     } else if (isThinkObservation(item)) {
                       return <ThinkObservationComponent key={index} observation={item} />;
+                    } else if (isQueryCodeIndexAction(item)) {
+                      return <QueryCodeIndexActionComponent key={index} action={item} />;
+                    } else if (isQueryCodeIndexObservation(item)) {
+                      return <QueryCodeIndexObservationComponent key={index} observation={item} />;
                     } else {
                       return (
                         <TrajectoryCard key={index}>
