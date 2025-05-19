@@ -11,6 +11,9 @@ interface MarkdownProps {
 }
 
 export const CMarkdown: React.FC<MarkdownProps> = ({ children }) => {
+  // Ensure children is a valid string
+  const safeMarkdown = typeof children === 'string' ? children : String(children);
+
   const components: Components = {
     code: ({ className, children, ...props }) => {
       const match = /language-(\w+)/.exec(className || '');
@@ -60,7 +63,7 @@ export const CMarkdown: React.FC<MarkdownProps> = ({ children }) => {
         remarkPlugins={[remarkGfm]}
         components={components}
       >
-        {children}
+        {safeMarkdown}
       </ReactMarkdown>
     </div>
   );
